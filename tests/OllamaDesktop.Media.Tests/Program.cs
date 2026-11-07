@@ -24,7 +24,12 @@ internal static class Program
             var completed=await importer.ResumeAsync(chat,saved,new InlineProgress(s=>{if(s.StartsWith("Распознавание "))repeatedAsr=true;}),CancellationToken.None);
             if(completed.CanResume||completed.Visuals.Count<20||repeatedAsr||completed.Media!.Lines.Count!=first.Media.Lines.Count)throw new Exception("Resume repeated/dropped content");
             if(AppPaths.Hash(paths.Resolve(completed.RelativeOriginal))!=completed.Sha256)throw new Exception("Original changed");
-            AppPaths.AtomicText(args[2],JsonDefaults.Write(new{version=BuildInfo.Version,passed=true,checks=new[]{"real worker and nested native job","full Russian ASR with final sentence","cancel after audio","partial TXT preserved","serialized checkpoint restored","resume in new process without repeated ASR","video frames across timeline","original SHA-256 preserved"},lines=completed.Media.Lines.Count,frames=completed.Visuals.Count}));
+            var wmp=paths.Resolve("Staging/synthetic.jxr");
+            var bitmap=System.Windows.Media.Imaging.BitmapSource.Create(32,24,96,96,System.Windows.Media.PixelFormats.Bgra32,null,Enumerable.Repeat((byte)180,32*24*4).ToArray(),32*4);
+            var encoder=new System.Windows.Media.Imaging.WmpBitmapEncoder();encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));using(var stream=File.Create(wmp))encoder.Save(stream);
+            var jxr=await importer.ImportAsync(chat,wmp,CancellationToken.None);
+            if(jxr.Visuals.Count!=1||!jxr.Warnings.Any(x=>x.Contains("JPEG XR")))throw new Exception("Windows JPEG XR decode failed");
+            AppPaths.AtomicText(args[2],JsonDefaults.Write(new{version=BuildInfo.Version,passed=true,checks=new[]{"real worker and nested native job","full Russian ASR with final sentence","cancel after audio","partial TXT preserved","serialized checkpoint restored","resume in new process without repeated ASR","video frames across timeline","original SHA-256 preserved","Windows JPEG XR decoded in actual STA worker"},lines=completed.Media.Lines.Count,frames=completed.Visuals.Count}));
             return 0;
         }catch(Exception e){AppPaths.AtomicText(args[2],JsonDefaults.Write(new{version=BuildInfo.Version,passed=false,code=e is AppException a?a.Code:e.GetType().Name}));return 1;}
     }

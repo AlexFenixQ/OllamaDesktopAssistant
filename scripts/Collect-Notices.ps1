@@ -59,6 +59,6 @@ Write-Host 'Сведения о зависимостях и доступные u
 
 $mediaNotices=Join-Path $notices 'Media-native';New-OwnedDirectory $mediaNotices
 Copy-Item -LiteralPath (Join-Path $Root 'deployment\native-sources') -Destination $mediaNotices -Recurse -Force
-foreach($file in @('native-sources.json','native-payload.json','MEDIA_LICENSES.md','COPYING.MinGW-w64-runtime.txt','WHISPER_MODEL_LICENSE')){Copy-Item -LiteralPath (Join-Path $Root ('deployment\'+$file)) -Destination $mediaNotices -Force}
+foreach($file in @('native-sources.json','native-payload.json','MEDIA_LICENSES.md','COPYING.MinGW-w64-runtime.txt','WHISPER_MODEL_LICENSE','AOM-LICENSE.txt','AOM-PATENTS.txt')){Copy-Item -LiteralPath (Join-Path $Root ('deployment\'+$file)) -Destination $mediaNotices -Force}
 Copy-Item -LiteralPath (Join-Path $Root 'scripts\Build-Native.ps1') -Destination $mediaNotices -Force
 Copy-Item -LiteralPath (Join-Path $Root 'scripts\Common.ps1') -Destination $mediaNotices -Force

@@ -1,20 +1,20 @@
 {
   "productId": "OllamaDesktopAssistant",
-  "version": "0.1.31",
-  "releaseType": "visual-media",
+  "version": "0.1.32",
+  "releaseType": "media-format-compatibility",
   "date": "2026-11-07",
-  "baseVersion": "0.1.30",
+  "baseVersion": "0.1.31",
   "dataSchema": 1,
   "target": "Windows 10/11 x64 (installer minimum 10.0.10240); Windows 11 ARM64 via x64 emulation (unverified)",
   "sdk": "10.0.403",
   "runtime": "10.0.14",
   "compiledInDeliveryEnvironment": true,
   "windowsExecutedInDeliveryEnvironment": true,
-  "liveCloudTested": true,
+  "liveCloudTested": false,
   "installerIncluded": true,
   "publicDistributionApproved": true,
-  "changeScope": "Visual consistency, larger documents, local full audio/video transcription and whole-recording reports.",
-  "expectedWindowsTests": 126,
+  "changeScope": "Broad native codec compatibility, AVI PCM mu-law fix, expanded images with safe decoding.",
+  "expectedWindowsTests": 154,
   "compatibilityPolicy": {
     "windows10InstallerMinimumBuild": 10240,
     "testedWindows10Builds": [],
@@ -30,5 +30,5 @@
   },
   "cleanWindowsAcceptance": false,
   "installerExecuted": true,
-  "installedVersionVerified": "0.1.31"
+  "installedVersionVerified": "0.1.32"
 }

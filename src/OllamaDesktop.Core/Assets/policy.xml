@@ -5,13 +5,13 @@
   <policy domain="resource" name="disk" value="128MiB"/>
   <policy domain="resource" name="width" value="12KP"/>
   <policy domain="resource" name="height" value="12KP"/>
-  <policy domain="resource" name="list-length" value="12"/>
+  <policy domain="resource" name="list-length" value="256"/>
   <policy domain="resource" name="thread" value="2"/>
   <policy domain="resource" name="time" value="60"/>
   <policy domain="delegate" rights="none" pattern="*"/>
   <policy domain="filter" rights="none" pattern="*"/>
   <policy domain="coder" rights="none" pattern="*"/>
-  <policy domain="coder" rights="read|write" pattern="{PNG,JPEG,JPG,WEBP,BMP,TIFF}"/>
+  <policy domain="coder" rights="read|write" pattern="{PNG,PNG8,PNG24,PNG32,PNG48,PNG64,JPEG,JPG,JPE,WEBP,BMP,BMP2,BMP3,DIB,TIFF,TIFF64,GIF,HEIC,HEIF,AVIF,JXL,JP2,J2K,JPC,JPM,JPX,PGX,JNG,MNG,ICO,CUR,ICON,ICNS,PSD,PSB,DDS,PCX,DCX,TGA,VDA,ICB,VST,EXR,HDR,RGBE,PIC,DPX,CIN,PNM,PBM,PGM,PPM,PAM,PFM,SVG,MSVG,MVG,XC,CANVAS,WMF,EMF,XBM,XPM,FITS,FIT,FTS,DNG,NEF,NRW,ARW,CR2,CR3,ORF,RAF,RW2,RWL,PEF,3FR,IIQ,SR2,SRF,SRW,X3F,RAW,DCR,KDC,ERF,MRW,MOS,MEF}"/>
   <policy domain="path" rights="none" pattern="@*"/>
   <policy domain="path" rights="none" pattern="{http,https,ftp}:*"/>
 </policymap>

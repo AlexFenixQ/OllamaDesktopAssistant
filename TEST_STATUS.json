@@ -1,23 +1,22 @@
 {
-  "version": "0.1.31",
-  "expectedTotalWindowsTests": 126,
-  "windowsCompile": "Windows 11 x64 build 26200, SDK 10.0.403, runtime 10.0.14; passed.",
-  "windowsTests": "126/126 passed, including complete six-hour chunk schedule, rejecting overlong/malformed media, whole-text report coverage, real DOCX validation, signed updates and existing document regressions.",
-  "wpfChecks": "17 smoke checks; see smoke-test.json for current executed result.",
-  "mediaIntegration": "Passed: real import worker, nested FFmpeg process, full Russian synthetic MP4 ASR, cancellation after audio, partial TXT, serialized checkpoint, resume in a fresh worker without repeated ASR, 24 frames, source SHA-256 unchanged.",
-  "liveCloudTested": true,
-  "cloudTest": "Real audio report and real vision+text report on synthetic Russian conference; two sampled frames, full transcript, TXT+DOCX created. No personal recordings/history transmitted.",
-  "visualChecks": "Actual WPF dark chat, settings, speech-model drop-down and project menu inspected; themed vector icons and 256px brand frame. Scrollbar replaced to match dark/light resources.",
+  "version": "0.1.32",
+  "expectedTotalWindowsTests": 154,
+  "windowsCompile": "Windows 11 x64 build 26200; SDK10.0.403, runtime10.0.14.",
+  "windowsTests": "154 format/security/regression checks, including audio cover art and ignoring unknown AVI service-stream durations; see executed tests.json.",
+  "mediaIntegration": "Real isolated worker: full synthetic Russian ASR, cancel/resume without repeated transcription, frames, original hash, Windows WIC JPEG XR.",
+  "userAviCompatibility": "Local-only: complete primary audio decoded to null for all five user AVI; corrected durations exclude unknown service stream, middle/end seeking verified, and one HEVC video frame decoded. No recording sent to cloud; full ASR on user recordings not run.",
+  "nativeBuild": "FFmpeg9.0.2 LGPL2.1+ broad native decoder/parser/demuxer set; static libaom3.15.1 software AV1; only system DLL imports.",
+  "liveCloudTested": false,
   "cleanWindowsAcceptance": false,
   "installerExecuted": true,
   "limitations": [
-    "No clean Windows VM without SDK/runtime available.",
-    "Actual 2 GiB/6-hour recording and Medium model were not transcribed end-to-end. Limits/timeline checked in unit tests; real Russian Small ASR and video checked on 37-second synthetic recording.",
-    "Speaker identity/diarization is not provided; ASR can misrecognize or omit unintelligible speech.",
-    "Video is a sampled visual analysis, not continuous vision. AV1 and some uncommon codecs unsupported.",
-    "No Authenticode publisher certificate; update metadata is RSA-signed.",
-    "Windows 10/ARM64 and multi-monitor DPI transitions not acceptance-tested."
+    "Not every existing codec/container/camera variant is tested or supported.",
+    "DRM/proprietary/encrypted/corrupt/oversized input and streams lacking reliable duration can fail explicitly.",
+    "SVG with external resources and EPS/AI/PostScript delegates not enabled.",
+    "Animation is sampled; PSD composite, ICO largest size, RAW/HDR normalized previews.",
+    "No clean Windows VM, Windows10/ARM64 or six-hour/2GiB complete acceptance.",
+    "Installer Authenticode certificate absent; update metadata RSA-signed."
   ],
-  "actualUpgrade": "Real signed 0.1.30 -> 0.1.31 silent Inno update completed; full program/Data backups verified. All existing history/project rows and protected fields, encrypted key and existing attachment/generated hashes preserved.",
-  "powershellTests": "52/52 Windows PowerShell 5.1 checks passed; full archive and GitHub-source 0.1.30 update/rollback passed; actual installed inventory transition verified on a clone."
+  "actualUpgrade": "Real silent signed 0.1.31 -> 0.1.32 passed. History/project original rows, DPAPI key, raw attachments, generated files and exact draft bytes preserved; full program/Data ZIP backups verified.",
+  "powershellTests": "52/52 Windows PowerShell5.1 checks, 4 updater scenarios, full/repository source update+rollback31->32 and real installed-inventory transition passed."
 }

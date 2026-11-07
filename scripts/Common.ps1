@@ -1,7 +1,7 @@
 ﻿Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $script:Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$script:Version = '0.1.31'
+$script:Version = '0.1.32'
 # Keep SDK / NuGet paths independent of the source directory depth.
 $script:LegacyTools = Join-Path $script:Root '.tools'
 $script:Tools = if ($env:ODA_BUILD_CACHE) { [IO.Path]::GetFullPath($env:ODA_BUILD_CACHE) } else { Join-Path $env:LOCALAPPDATA 'ODA.b' }
@@ -37,11 +37,11 @@ function New-OwnedDirectory([string]$Path) {
 }
 function Get-OfficialFile([string]$Url, [string]$Destination) {
     $uri = [Uri]$Url
-    if ($uri.Scheme -ne 'https' -or $uri.Host -notin @('builds.dotnet.microsoft.com','dotnetcli.azureedge.net','ci.dot.net','download.visualstudio.microsoft.com','github.com','api.github.com','raw.githubusercontent.com','codeload.github.com','ffmpeg.org')) { throw 'Источник загрузки не входит в список разрешённых.' }
+    if ($uri.Scheme -ne 'https' -or $uri.Host -notin @('builds.dotnet.microsoft.com','dotnetcli.azureedge.net','ci.dot.net','download.visualstudio.microsoft.com','github.com','api.github.com','raw.githubusercontent.com','codeload.github.com','ffmpeg.org','storage.googleapis.com')) { throw 'Источник загрузки не входит в список разрешённых.' }
     New-OwnedDirectory ([IO.Path]::GetDirectoryName($Destination))
     $temp = $Destination + '.part-' + [Guid]::NewGuid().ToString('N')
     try {
-        Invoke-WebRequest -Uri $uri.AbsoluteUri -OutFile $temp -UseBasicParsing -TimeoutSec 1200 -UserAgent 'OllamaDesktop-OwnerBuild/0.1.31' | Out-Null
+        Invoke-WebRequest -Uri $uri.AbsoluteUri -OutFile $temp -UseBasicParsing -TimeoutSec 1200 -UserAgent 'OllamaDesktop-OwnerBuild/0.1.32' | Out-Null
         Move-Item -LiteralPath $temp -Destination $Destination -Force
     } finally { if (Test-Path -LiteralPath $temp) { Remove-Item -LiteralPath $temp -Force } }
 }

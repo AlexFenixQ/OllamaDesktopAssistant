@@ -33,3 +33,6 @@ Sources used for integration:
 - https://learn.microsoft.com/en-us/dotnet/core/deploying/
 
 Native audio/video additions: Whisper.net 1.9.1 (MIT), whisper.cpp exact commit f24588a272ae8e23280d9c220536437164e6ed28 (MIT), FFmpeg 9.0.2 (LGPL 2.1+ build with GPL/version3/nonfree disabled), and statically linked MinGW/GCC runtimes under their runtime exceptions. Complete corresponding native source archives, build flags/script and licenses are included under ThirdPartyNotices/Media-native. Speech model weights are downloaded separately under OpenAI Whisper MIT; they are not in the installer. See deployment/MEDIA_LICENSES.md.
+
+
+0.1.32 additions: libaom 3.15.1 (BSD-2-Clause and AOM Patent License), complete sources/build script and licenses included with native notices. This product includes DNG technology under license by Adobe. Pillow-heif HEVC/HEIF test fixture is used only in source regression tests, with upstream BSD-3-Clause license in test_data/Formats. Its source URL and checksum are recorded there. Windows JPEG XR/WIC is supplied by Windows and is not redistributed.

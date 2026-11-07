@@ -7,9 +7,9 @@ namespace OllamaDesktop.Core;
 
 public static class FileGuard
 {
-    public static readonly string[] MediaExtensions = [".wav", ".mp3", ".m4a", ".aac", ".flac", ".ogg", ".opus", ".mp4", ".mov", ".mkv", ".webm", ".avi", ".wmv", ".wma", ".mpg", ".mpeg", ".ts"];
+    public static readonly string[] MediaExtensions = [".wav", ".wave", ".w64", ".rf64", ".mp3", ".mp2", ".mpa", ".m4a", ".m4b", ".m4p", ".aac", ".adts", ".flac", ".ogg", ".oga", ".opus", ".aif", ".aiff", ".aifc", ".au", ".snd", ".caf", ".amr", ".awb", ".ac3", ".eac3", ".dts", ".mka", ".ape", ".wv", ".tta", ".tak", ".alac", ".mp4", ".m4v", ".mov", ".qt", ".mkv", ".webm", ".avi", ".wmv", ".asf", ".mpg", ".mpeg", ".mpe", ".vob", ".vro", ".ts", ".mts", ".m2ts", ".m2t", ".mxf", ".flv", ".f4v", ".3gp", ".3g2", ".ogv", ".rm", ".rmvb", ".nut", ".nsv", ".h264", ".264", ".h265", ".265", ".hevc", ".av1", ".ivf", ".y4m", ".dv", ".m2v", ".m1v", ".divx", ".xvid", ".bik", ".smk", ".fli", ".flc", ".swf", ".mjpeg", ".mjpg", ".dat"];
     public static bool IsMedia(string file) => MediaExtensions.Contains(Path.GetExtension(file).ToLowerInvariant());
-    public static readonly string[] Extensions = [..MediaExtensions,".docx", ".xlsx", ".pptx", ".pdf", ".txt", ".csv", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".zip"];
+    public static readonly string[] Extensions = [..MediaExtensions,..ImageFormats.Extensions,".docx",".xlsx",".pptx",".pdf",".txt",".csv",".zip"];
     public static string Extension(string path)
     {
         var extension = Path.GetExtension(path).ToLowerInvariant();
@@ -66,11 +66,10 @@ public static class FileGuard
         if (data.Length >= 12 && Encoding.ASCII.GetString(data[..4]) == "RIFF" && Encoding.ASCII.GetString(data.Slice(8, 4)) == "WEBP") return "WEBP";
         if (data.Length >= 2 && data[0] == 66 && data[1] == 77) return "BMP";
         if (data.Length >= 4 && (data[..4].SequenceEqual(new byte[] { 73, 73, 42, 0 }) || data[..4].SequenceEqual(new byte[] { 77, 77, 0, 42 }))) return "TIFF";
-        throw new AppException("IMAGE_SIGNATURE", "Неподдерживаемое или повреждённое изображение. Требуется JPEG, PNG, WebP, BMP или обычный TIFF.");
+        return ImageFormats.Detect(data);
     }
     public static void CheckImageExtension(string extension, string format)
     {
-        var expected = extension switch { ".jpg" or ".jpeg" => "JPEG", ".png" => "PNG", ".webp" => "WEBP", ".bmp" => "BMP", ".tif" or ".tiff" => "TIFF", _ => "" };
-        if (expected != format) throw new AppException("IMAGE_MISMATCH", "Расширение изображения не соответствует его содержимому.");
+        if (!ImageFormats.ExtensionMatches(extension,format)) throw new AppException("IMAGE_MISMATCH", "Расширение изображения не соответствует распознанному содержимому.");
     }
 }

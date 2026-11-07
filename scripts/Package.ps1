@@ -18,7 +18,7 @@ foreach ($file in Get-ChildItem -LiteralPath $Publish -File -Recurse | Where-Obj
 $installerDir = Join-Path $Artifacts 'installer'; New-OwnedDirectory $installerDir
 $compiler = Join-Path $Tools 'inno\ISCC.exe'
 Invoke-Checked $compiler @('/Qp', ('/DPublishDir=' + $Publish), ('/DOutputDir=' + $installerDir), (Join-Path $Root 'deployment\OllamaDesktop.iss')) 'packaging.log'
-$setup = Join-Path $installerDir 'OllamaDesktop-0.1.31-win-x64-Setup.exe'
+$setup = Join-Path $installerDir 'OllamaDesktop-0.1.32-win-x64-Setup.exe'
 if (-not (Test-Path -LiteralPath $setup)) { throw 'Установщик не создан.' }
 ((Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash + '  ' + [IO.Path]::GetFileName($setup)) | Set-Content -LiteralPath ($setup + '.sha256') -Encoding ASCII
 Write-Host ('Установщик: ' + $setup) -ForegroundColor Green

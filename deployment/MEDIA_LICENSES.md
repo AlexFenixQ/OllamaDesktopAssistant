@@ -6,4 +6,11 @@ Whisper.net 1.9.1 and whisper.cpp f24588a272ae8e23280d9c220536437164e6ed28 use M
 
 The separately downloaded multilingual Whisper small/medium ggml models originate from OpenAI Whisper (MIT). Exact immutable model URLs and SHA-256 values are pinned in MediaModels.cs. Model weights are not part of this installer. The included MIT license records the upstream OpenAI copyright; the model-download host is Hugging Face ggerganov/whisper.cpp.
 
-Build compiler: w64devkit 2.11.0 (development only; not shipped to end users). No Visual C++ Redistributable is required by these native builds. AV1 and some uncommon codecs are not available; unsupported/corrupted files fail explicitly with originals preserved.
+Build compiler: w64devkit 2.11.0 (development only; not shipped to end users). No Visual C++ Redistributable is required by these native builds. AV1 software decoding is provided by static libaom 3.15.1. The native FFmpeg LGPL decoder/parser/demuxer set is enabled, while runtime container/protocol whitelists still reject playlists/network sources. Corrupted, encrypted, unknown/proprietary or resource-exceeding files fail explicitly with originals preserved.
+
+
+libaom 3.15.1 (official AOMedia release): BSD-2-Clause plus AOM patent license; complete exact source archive and build flags are included. No GPL/nonfree codec dependency is enabled. Build is static, decoder-only and CPU-generic; no GPU or external runtime is required. AOM-LICENSE.txt and AOM-PATENTS.txt are included.
+
+JPEG XR uses the OS-provided Windows WIC codec through WPF in the disposable STA worker; no Windows codec DLL is redistributed. DNG/RAW/HEIF/AVIF/JXL etc use the existing Magick.NET native codec distribution, subject to bundled upstream notices. This product includes DNG technology under license by Adobe.
+
+The owner build can use an existing Git-for-Windows Perl or automatically fetch official Strawberry Perl 5.42.3.1 portable, verified against upstream SHA-256. Perl is a build-time tool, not shipped to ordinary users.

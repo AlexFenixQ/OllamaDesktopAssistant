@@ -2,13 +2,13 @@
   "files": [
     {
       "path": "src/OllamaDesktop.Core/NativePayload/MediaTools/ffmpeg.exe",
-      "bytes": 10997248,
-      "sha256": "B29AB72E5750C7FEBC17775A71D8569AE620B7805A6F030B6D86F2DD6AB073EB"
+      "bytes": 21916160,
+      "sha256": "2E129DA3C1BC2F17D47F1193D2A25118F28B4D23007B66E31AC222061DD23187"
     },
     {
       "path": "src/OllamaDesktop.Core/NativePayload/MediaTools/ffprobe.exe",
-      "bytes": 10780672,
-      "sha256": "449CADC1CD89AC3A97A4EA0841C47DF73E3771AB0C93FDEA9909A287E1DC7D93"
+      "bytes": 21699584,
+      "sha256": "46492747E6AA92E61D7D40CDE368055309AEAFBC13CE2A6E869F714260F49A25"
     },
     {
       "path": "src/OllamaDesktop.Core/NativePayload/runtimes/noavx/win-x64/ggml-base-whisper.dll",

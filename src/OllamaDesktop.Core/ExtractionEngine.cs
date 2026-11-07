@@ -10,7 +10,7 @@ using A = DocumentFormat.OpenXml.Drawing;
 namespace OllamaDesktop.Core;
 
 /// <summary>Run in a disposable bounded worker process, never on the UI thread.</summary>
-public sealed class ExtractionEngine(AppPaths paths)
+public sealed class ExtractionEngine(AppPaths paths,Func<string,byte[]>? platformImageDecoder=null)
 {
     private Attachment _result = new();
     private string _directory = "";
@@ -37,8 +37,14 @@ public sealed class ExtractionEngine(AppPaths paths)
             case ".pdf": ReadPdf(file); break;
             case ".txt": case ".csv": ReadText(file, extension); break;
             default:
-                var bytes = File.ReadAllBytes(file); var format = FileGuard.ImageFormat(bytes); FileGuard.CheckImageExtension(extension, format);
-                AddImage(bytes, "изображение", true); break;
+                if(extension is ".jxr" or ".wdp" or ".hdp"){
+                    if(platformImageDecoder is null)throw new AppException("IMAGE_WINDOWS_CODEC","Для JPEG XR требуется встроенный Windows-декодер приложения.");
+                    AddImage(platformImageDecoder(file),"JPEG XR, подготовленное изображение",true);
+                    _result.Warnings.Add("JPEG XR подготовлен встроенным Windows WIC. HDR преобразован для обычного визуального анализа; оригинал сохранён.");break;
+                }
+                var bytes = ImageFormats.Prepare(File.ReadAllBytes(file),extension); var format = ImageFormats.DetectFile(bytes,extension); FileGuard.CheckImageExtension(extension, format);
+                if(ImageFormats.IsAnimation(format,bytes)&&ReadAnimation(file))break;
+                AddImage(bytes, "изображение", true,extension); break;
         }
         if (_skippedVisuals > 0) _result.Warnings.Add($"Не подготовлено изображений/страниц для визуального анализа: {_skippedVisuals}. Лимит — {Limits.VisualsPerFile} визуальных объектов на документ; текст извлечён отдельно.");
         if (_result.Segments.Count == 0 && _result.Visuals.Count == 0) throw new AppException("EMPTY_EXTRACTION", "Не удалось извлечь текст или поддерживаемые изображения.");
@@ -240,22 +246,46 @@ public sealed class ExtractionEngine(AppPaths paths)
             }
         }
     }
-    private void AddImage(byte[] bytes, string reference, bool standalone)
+    private bool ReadAnimation(string file)
+    {
+        MediaProbe info;
+        try{info=MediaTools.ProbeAsync(file,CancellationToken.None).GetAwaiter().GetResult();}
+        catch(AppException e)when(e.Code is "MEDIA_DURATION" or "MEDIA_DECODE"){return false;}
+        var count=info.Frames>0?(int)Math.Min(24,info.Frames):info.Duration<0.2?1:24;
+        foreach(var time in MediaTime.UniformFrames(info.Duration,count)){
+            var output=Path.Combine(_directory,$"animation-{_result.Visuals.Count+1:0000}.jpg");
+            var index=info.Frames>0?Math.Min(info.Frames-1,(long)(time/info.Duration*info.Frames)):-1;
+            if(index>=0)MediaTools.FrameIndexAsync(file,output,index,CancellationToken.None).GetAwaiter().GetResult();
+            else MediaTools.FrameAsync(file,output,time,CancellationToken.None).GetAwaiter().GetResult();
+            if(!File.Exists(output))throw new AppException("ANIMATION_FRAME","Декодер не создал кадр анимации. Оригинал сохранён.");
+            AddVisual(output,index>=0?$"кадр {index+1} из {info.Frames}":"кадр около "+MediaTime.Format(time));
+        }
+        _result.Warnings.Add($"Анимация: подготовлено {_result.Visuals.Count} кадров равномерно по последовательности кадров; длительность {MediaTime.Format(info.Duration)}. Это выборочный визуальный анализ; события между кадрами могут быть пропущены. Оригинал сохранён.");
+        return true;
+    }
+    private void AddImage(byte[] bytes, string reference, bool standalone,string? extension=null)
     {
         if (bytes.Length == 0 || bytes.Length > Limits.FileBytes) throw new AppException("IMAGE_BYTES", "Размер изображения превышает ограничение.");
         var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes));
         if (!_imageHashes.Add(hash)) return;
-        var format = FileGuard.ImageFormat(bytes);
-        var settings = new MagickReadSettings { Format = format switch { "PNG" => MagickFormat.Png, "JPEG" => MagickFormat.Jpeg, "WEBP" => MagickFormat.WebP, "BMP" => MagickFormat.Bmp, _ => MagickFormat.Tiff } };
+        var format = extension is null?FileGuard.ImageFormat(bytes):ImageFormats.DetectFile(bytes,extension);
+        var settings = new MagickReadSettings { Format = ImageFormats.NativeFormat(format,extension) };
+        if(standalone&&extension is ".psd" or ".psb")settings.FrameCount=1;
         using var images = new MagickImageCollection(); images.Read(bytes, settings);
-        if (images.Count > Limits.ImagePages) throw new AppException("IMAGE_PAGES", "В одном изображении допускается до 12 страниц/кадров.");
-        if (format != "TIFF" && images.Count > 1) throw new AppException("IMAGE_ANIMATION", "Анимированные изображения пока не поддерживаются.");
-        if (standalone && images.Count > Limits.VisualsPerFile) throw new AppException("TIFF_PAGES", "В первой версии поддерживается TIFF не более чем с 8 страницами, чтобы не терять страницы при анализе.");
+        if(images.Count==0)throw new AppException("IMAGE_EMPTY","В изображении нет доступных кадров.");
+        var composite=standalone&&extension is ".psd" or ".psb";
+        var icon=standalone&&extension is ".ico" or ".cur" or ".icns";
+        if(!composite&&!icon&&images.Count>(standalone?48:Limits.ImagePages))throw new AppException("IMAGE_PAGES","Изображение содержит слишком много страниц: до 48 для отдельного файла. Для анимации используйте GIF/APNG или видео. Исходник сохранён.");
+        if(images.Count>1&&format!="TIFF"&&!composite&&!icon){images.Coalesce();_result.Warnings.Add("Многостраничное изображение: подготовлены доступные кадры/страницы; их смысл и порядок зависят от формата контейнера.");}
+        var selected=icon?images.OrderByDescending(i=>(ulong)i.Width*i.Height).Take(1):composite?images.Take(1):images;
+        if(composite)_result.Warnings.Add("PSD/PSB: анализируется сведённое изображение. Редактирование и отдельный анализ слоёв не выполняются; исходник сохранён.");
+        if(icon)_result.Warnings.Add("Из набора значков выбран вариант с наибольшим разрешением.");
+        if(ImageFormats.IsRaw(extension)||format is "HDR" or "EXR" or "DPX" or "CIN")_result.Warnings.Add("RAW/HDR преобразован в обычное изображение для визуального анализа. Цвет и динамический диапазон могут отличаться от профессиональной проявки; исходник сохранён.");
         var frame = 0;
-        foreach (var image in images)
+        foreach (var image in selected)
         {
             frame++;
-            if (_result.Visuals.Count >= Limits.VisualsPerFile) { _skippedVisuals++; continue; }
+            if (_result.Visuals.Count >= (standalone?48:Limits.VisualsPerFile)) { _skippedVisuals++; continue; }
             if ((ulong)image.Width * image.Height > Limits.ImagePixels || image.Width == 0 || image.Height == 0) throw new AppException("IMAGE_PIXELS", "Изображение превышает 40 мегапикселей или имеет неверный размер.");
             image.AutoOrient();
             if (image.Width > Limits.MaxImageSide || image.Height > Limits.MaxImageSide)

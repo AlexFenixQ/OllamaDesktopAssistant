@@ -1,10 +1,10 @@
 {
-  "version": "0.1.31",
+  "version": "0.1.32",
   "passed": true,
-  "actualSilentUpgrade": "0.1.30 -> 0.1.31",
-  "historyAllExistingRowsAndProtectedFieldsPreserved": true,
-  "projectsAllExistingRowsAndProtectedFieldsPreserved": true,
-  "encryptedKeyAndAllExistingAttachmentAndGeneratedFileHashesPreserved": true,
+  "actualSilentUpgrade": "0.1.31 -> 0.1.32",
+  "historyAndProjectOriginalRowsPreserved": true,
+  "keyAndOriginalAttachmentAndGeneratedHashesPreserved": true,
+  "draftExactBytesPreserved": true,
   "verifiedBackupExists": true,
-  "userDataRestoredFromOldBackup": false
+  "userDataReplacedFromOldBackup": false
 }

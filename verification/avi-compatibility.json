@@ -1,0 +1,11 @@
+{
+  "version": "0.1.32",
+  "passed": true,
+  "userFilesChecked": 5,
+  "fullPrimaryAudioDecodedLocally": true,
+  "middleAndCorrectedEndSeekingVerified": true,
+  "hevcVideoFrameDecoded": true,
+  "unknownServiceStreamDurationIgnored": true,
+  "recordingSentToCloud": false,
+  "fullUserAsrExecuted": false
+}

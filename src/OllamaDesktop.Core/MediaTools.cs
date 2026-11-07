@@ -5,10 +5,10 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 namespace OllamaDesktop.Core;
 
-public sealed record MediaProbe(double Duration,bool Audio,bool Video,int Width,int Height);
+public sealed record MediaProbe(double Duration,bool Audio,bool Video,int Width,int Height,long Frames=0,int AudioTracks=0,int UnknownTracks=0);
 public static class MediaTools
 {
-    private const string Formats="mov,matroska,avi,asf,mpegts,mpegvideo,wav,w64,mp3,aac,flac,ogg,aiff";
+    private const string Formats="mov,matroska,webm,avi,asf,mpegts,mpegvideo,mpeg,vob,flv,rm,ogg,ogv,mxf,nut,nsv,h264,hevc,av1,ivf,yuv4mpegpipe,dv,mjpeg,bink,smacker,flic,swf,wav,w64,mp3,mp2,aac,flac,aiff,au,caf,amr,ac3,eac3,dts,ape,wv,tta,tak,loas,g722,g723_1,g726,g726le,ilbc,spdif,truehd,mlp,gif,apng,webp_pipe,webp";
     public static string Executable(string name) {
         if(name is not ("ffmpeg" or "ffprobe"))throw new ArgumentException(nameof(name));
         var path=Path.Combine(AppContext.BaseDirectory,"MediaTools",name+".exe");
@@ -18,14 +18,11 @@ public static class MediaTools
     public static void CheckHeader(string path) {
         using var stream=File.OpenRead(path);Span<byte> b=stackalloc byte[64];var n=stream.Read(b);b=b[..n];
         static bool Prefix(ReadOnlySpan<byte> data,string text)=>data.Length>=text.Length && Encoding.ASCII.GetString(data[..text.Length])==text;
-        // Reject playlists, text manifests, arbitrary images and executable masquerades before probing.
-        var valid=(n>=12 && ((Prefix(b,"RIFF") && (Encoding.ASCII.GetString(b.Slice(8,4)) is "WAVE" or "AVI "))||Encoding.ASCII.GetString(b.Slice(4,4))=="ftyp"))||Prefix(b,"ID3")||Prefix(b,"fLaC")||Prefix(b,"OggS")||Prefix(b,"FORM")||
-            (n>=4 && b[0]==0x1a && b[1]==0x45 && b[2]==0xdf && b[3]==0xa3)||
-            (n>=4 && b[0]==0x30 && b[1]==0x26 && b[2]==0xb2 && b[3]==0x75)||
-            (n>=2 && b[0]==0xff && (b[1]&0xe0)==0xe0)||
-            (n>=4 && b[0]==0 && b[1]==0 && b[2]==1 && (b[3] is 0xba or 0xb3))||
-            (n>=1 && b[0]==0x47 && Path.GetExtension(path).Equals(".ts",StringComparison.OrdinalIgnoreCase));
-        if(!valid)throw new AppException("MEDIA_SIGNATURE","Содержимое не похоже на поддерживаемую медиазапись. Плейлисты, ссылки и сетевые потоки не открываются.");
+        // A strict demuxer allowlist below decides the actual container. Reject
+        // executable/document/playlist masquerades without excluding valid codecs.
+        var prefix=Encoding.ASCII.GetString(b).TrimStart();
+        if(n==0||Prefix(b,"MZ")||Prefix(b,"PK")||Prefix(b,"%PDF")||prefix.StartsWith("#EXTM3U",StringComparison.OrdinalIgnoreCase)||prefix.StartsWith("<",StringComparison.Ordinal)||prefix.StartsWith("[playlist]",StringComparison.OrdinalIgnoreCase))
+            throw new AppException("MEDIA_SIGNATURE","Это не локальная медиазапись: исполняемые файлы, документы, плейлисты и сетевые источники не открываются.");
     }
     public static async Task<string> RunAsync(string name,IEnumerable<string> arguments,TimeSpan timeout,CancellationToken ct,Action<string>? errorLine=null) {
         var start=new ProcessStartInfo(Executable(name)){UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true};
@@ -43,18 +40,36 @@ public static class MediaTools
     }
     public static async Task<MediaProbe> ProbeAsync(string path,CancellationToken ct) {
         CheckHeader(path);
-        var json=await RunAsync("ffprobe",["-hide_banner","-v","error","-protocol_whitelist","file","-format_whitelist",Formats,"-probesize","8388608","-analyzeduration","10000000","-show_entries","format=duration:stream=codec_type,duration,width,height","-of","json",path],TimeSpan.FromSeconds(45),ct);
-        using var doc=JsonDocument.Parse(json);var duration=0d;bool audio=false,video=false;int width=0,height=0;
+        var json=await RunAsync("ffprobe",["-hide_banner","-v","error","-protocol_whitelist","file","-format_whitelist",Formats,"-probesize","8388608","-analyzeduration","10000000","-show_entries","format=duration:stream=codec_type,codec_name,duration,width,height,nb_frames:stream_disposition=attached_pic","-of","json",path],TimeSpan.FromSeconds(45),ct);
+        var info=ParseProbe(json);
+        // Some AVI exporters label a service stream as audio and give it a bogus
+        // duration. Decode the primary audio locally to null in this exceptional
+        // case, so real audio beyond a video stream cannot be silently omitted.
+        if(info.Audio&&info.UnknownTracks>0){
+            var output=await RunAsync("ffmpeg",["-hide_banner","-v","error","-nostdin","-nostats","-progress","pipe:1","-protocol_whitelist","file,pipe","-format_whitelist",Formats,"-i",path,"-map","0:a:0","-vn","-sn","-dn","-c:a","pcm_s16le","-f","null","-"],TimeSpan.FromMinutes(10),ct);
+            var measured=Regex.Matches(output,@"(?m)^out_time_us=(\d+)\r?$").Select(m=>double.Parse(m.Groups[1].Value,CultureInfo.InvariantCulture)/1_000_000d).DefaultIfEmpty().Max();
+            if(measured<=0)throw new AppException("MEDIA_AUDIO_DURATION","Не удалось подтвердить длительность основной звуковой дорожки.");
+            info=info with{Duration=Math.Max(info.Duration,measured)};_=MediaTime.Chunks(info.Duration).First();
+        }
+        return info;
+    }
+    public static MediaProbe ParseProbe(string json) {
+        using var doc=JsonDocument.Parse(json);var duration=0d;var containerDuration=0d;var unknownTracks=0;bool audio=false,video=false;int width=0,height=0;long frames=0;int audioTracks=0;
         static double Number(JsonElement x,string key)=>x.TryGetProperty(key,out var value) && double.TryParse(value.ToString(),NumberStyles.Float,CultureInfo.InvariantCulture,out var n)?n:0;
-        if(doc.RootElement.TryGetProperty("format",out var f))duration=Number(f,"duration");
-        foreach(var s in doc.RootElement.GetProperty("streams").EnumerateArray()){var type=s.GetProperty("codec_type").GetString();audio|=type=="audio";video|=type=="video";duration=Math.Max(duration,Number(s,"duration"));if(type=="video"){width=Math.Max(width,(int)Number(s,"width"));height=Math.Max(height,(int)Number(s,"height"));}}
+        if(doc.RootElement.TryGetProperty("format",out var f))containerDuration=Number(f,"duration");
+        foreach(var s in doc.RootElement.GetProperty("streams").EnumerateArray()){var type=s.GetProperty("codec_type").GetString();var cover=s.TryGetProperty("disposition",out var disposition)&&disposition.TryGetProperty("attached_pic",out var attached)&&attached.GetInt32()==1;var known=s.TryGetProperty("codec_name",out var codec)&&!string.IsNullOrWhiteSpace(codec.GetString())&&codec.GetString()!="unknown";var actualVideo=type=="video"&&!cover&&known;var actualAudio=type=="audio"&&known;if(type is "audio" or "video"&&!known)unknownTracks++;audio|=actualAudio;video|=actualVideo;if(actualAudio||actualVideo)duration=Math.Max(duration,Number(s,"duration"));if(actualVideo){frames=Math.Max(frames,(long)Number(s,"nb_frames"));width=Math.Max(width,(int)Number(s,"width"));height=Math.Max(height,(int)Number(s,"height"));}}
         if(!audio&&!video)throw new AppException("MEDIA_EMPTY","В файле нет доступных звуковых или видеодорожек.");
+        if(unknownTracks==0)duration=Math.Max(duration,containerDuration);
+        else if(duration<=0)duration=containerDuration;
         _=MediaTime.Chunks(duration).First();if((long)width*height>40_000_000)throw new AppException("MEDIA_PIXELS","Кадр превышает 40 миллионов пикселей.");
-        return new(duration,audio,video,width,height);
+        audioTracks=doc.RootElement.GetProperty("streams").EnumerateArray().Count(s=>s.GetProperty("codec_type").GetString()=="audio");
+        return new(duration,audio,video,width,height,frames,audioTracks,unknownTracks);
     }
     private static string N(double n)=>n.ToString("0.###",CultureInfo.InvariantCulture);
+    private const string FrameScale="scale='min(1280,iw)':'min(1280,ih)':force_original_aspect_ratio=decrease";
+    public static Task<string> FrameIndexAsync(string input,string output,long index,CancellationToken ct)=>RunAsync("ffmpeg",["-hide_banner","-v","error","-nostdin","-n","-protocol_whitelist","file","-format_whitelist",Formats,"-i",input,"-map","0:v:0","-an","-sn","-dn","-frames:v","1","-vf",@"select=eq(n\,"+index.ToString(CultureInfo.InvariantCulture)+"),"+FrameScale,"-threads","2",output],TimeSpan.FromMinutes(3),ct);
     public static Task<string> AudioChunkAsync(string input,string output,double start,double duration,CancellationToken ct)=>RunAsync("ffmpeg",["-hide_banner","-v","error","-nostdin","-n","-protocol_whitelist","file","-format_whitelist",Formats,"-ss",N(start),"-i",input,"-t",N(duration),"-map","0:a:0","-vn","-sn","-dn","-ac","1","-ar","16000","-c:a","pcm_s16le","-f","wav",output],TimeSpan.FromMinutes(10),ct);
-    public static Task<string> FrameAsync(string input,string output,double time,CancellationToken ct)=>RunAsync("ffmpeg",["-hide_banner","-v","error","-nostdin","-n","-protocol_whitelist","file","-format_whitelist",Formats,"-ss",N(time),"-i",input,"-map","0:v:0","-an","-sn","-dn","-frames:v","1","-vf","scale=1280:1280:force_original_aspect_ratio=decrease","-threads","2",output],TimeSpan.FromMinutes(3),ct);
+    public static Task<string> FrameAsync(string input,string output,double time,CancellationToken ct)=>RunAsync("ffmpeg",["-hide_banner","-v","error","-nostdin","-n","-protocol_whitelist","file","-format_whitelist",Formats,"-ss",N(time),"-i",input,"-map","0:v:0","-an","-sn","-dn","-frames:v","1","-vf",FrameScale,"-threads","2",output],TimeSpan.FromMinutes(3),ct);
     public static async Task<List<double>> ScenesAsync(string input,double duration,IProgress<string>? progress,CancellationToken ct) {
         var slots=new double?[40];var last=DateTime.MinValue;
         await RunAsync("ffmpeg",["-hide_banner","-v","info","-nostdin","-protocol_whitelist","file","-format_whitelist",Formats,"-i",input,"-map","0:v:0","-an","-sn","-dn","-vf",@"scale=320:-2,select=gt(scene\,0.18),showinfo","-threads","2","-f","null","-"],TimeSpan.FromHours(3),ct,line=>{

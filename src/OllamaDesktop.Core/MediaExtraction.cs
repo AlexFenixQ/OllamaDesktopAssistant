@@ -20,6 +20,9 @@ public sealed class MediaExtraction(AppPaths paths)
         if(a is not null && a.Sha256!=hash)throw new AppException("MEDIA_CHANGED","Медиазапись изменилась после начала распознавания.");
         a??=new Attachment{Id=job.AttachmentId,Name=Path.GetFileName(job.Name),RelativeOriginal=relative,Bytes=new FileInfo(file).Length,Sha256=hash,Media=new MediaMetadata{DurationSeconds=info.Duration,HasAudio=info.Audio,HasVideo=info.Video,SpeechModel=SpeechModelStore.Definition(job.SpeechModel).Id,TranscriptRelative=prefix+"transcript.txt",AudioComplete=!info.Audio,FramesComplete=!info.Video}};
         var media=a.Media!;
+        media.DurationSeconds=info.Duration;media.HasAudio=info.Audio;media.HasVideo=info.Video;
+        media.ProcessedSeconds=Math.Min(media.ProcessedSeconds,info.Duration);
+        if(!info.Audio||media.ProcessedSeconds>=info.Duration-0.02)media.AudioComplete=true;if(!info.Video)media.FramesComplete=true;
         void Save(){WriteTranscript(a);AppPaths.AtomicText(paths.Resolve(CheckpointRelative(job.ChatId,job.AttachmentId)),JsonDefaults.Write(a));}
         Save();
         if(info.Audio&&!media.AudioComplete) {
@@ -59,7 +62,9 @@ public sealed class MediaExtraction(AppPaths paths)
             media.FramesComplete=true;
         }
         a.Warnings=a.Warnings.Where(w=>!w.StartsWith("Медиазапись:")).ToList();
-        a.Warnings.Add(info.Audio?"Медиазапись: обработана вся доступная звуковая дорожка. Распознавание автоматическое: возможны ошибки, неразборчивые места и ошибки таймкодов. Надёжное разделение по голосам не выполняется.":"Медиазапись: звуковая дорожка отсутствует; расшифровка речи невозможна.");
+        if(info.UnknownTracks>0)a.Warnings.Add($"Медиазапись: потоков с неопознанным кодеком: {info.UnknownTracks}. Они не включены в анализ и не определяют длительность распознанных дорожек.");
+        if(info.AudioTracks>1)a.Warnings.Add($"Медиазапись: объявлено звуковых дорожек: {info.AudioTracks}. Полностью обрабатывается первая (основная); дополнительные дорожки в эту расшифровку не включены.");
+        a.Warnings.Add(info.Audio?"Медиазапись: полностью обработана основная звуковая дорожка. Распознавание автоматическое: возможны ошибки, неразборчивые места и ошибки таймкодов. Надёжное разделение по голосам не выполняется.":"Медиазапись: звуковая дорожка отсутствует; расшифровка речи невозможна.");
         if(info.Video)a.Warnings.Add($"Медиазапись: подготовлено {a.Visuals.Count} кадров по всей временной шкале и сменам сцен. Это выборочный визуальный анализ; краткие события между кадрами могут быть пропущены.");
         media.TranscriptArtifact=MediaArtifacts.Transcript(paths,job.ChatId,a);
         Save();return a;

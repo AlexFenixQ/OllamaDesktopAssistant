@@ -1,7 +1,7 @@
 {
   "productId": "OllamaDesktopAssistant",
   "fromVersion": "0.1.16",
-  "toVersion": "0.1.31",
+  "toVersion": "0.1.32",
   "files": [
     {
       "path": ".gitignore",

@@ -2,7 +2,7 @@
 . (Join-Path $PSScriptRoot 'scripts\Common.ps1')
 Assert-Environment
 & (Join-Path $Root 'scripts\Verify-Package.ps1') -Quiet
-$setup = Join-Path $Root 'release\OllamaDesktop-0.1.31-win-x64-Setup.exe'
+$setup = Join-Path $Root 'release\OllamaDesktop-0.1.32-win-x64-Setup.exe'
 if (-not (Test-Path -LiteralPath $setup -PathType Leaf)) { throw 'Готовый установщик отсутствует. Для сборки используйте Repair.ps1.' }
 if (Test-Path -LiteralPath $InstallDir) {
     $files = @(Get-ChildItem -LiteralPath $InstallDir -Force)

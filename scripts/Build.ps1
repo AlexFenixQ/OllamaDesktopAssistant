@@ -24,7 +24,7 @@ try {
         Remove-Item -LiteralPath $Publish -Recurse -Force
     }
     New-OwnedDirectory $Publish
-    Set-Content -LiteralPath (Join-Path $Publish '.build-owned') -Value 'OllamaDesktopAssistant 0.1.31' -Encoding ASCII
+    Set-Content -LiteralPath (Join-Path $Publish '.build-owned') -Value 'OllamaDesktopAssistant 0.1.32' -Encoding ASCII
     Invoke-Checked $Dotnet @('publish', $app, '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true', '--no-restore', '-o', $Publish, '-p:PublishTrimmed=false', '-p:PublishSingleFile=false')
     foreach ($required in @('OllamaDesktop.exe','OllamaDesktop.dll','coreclr.dll','hostfxr.dll','e_sqlite3.dll','pdfium.dll','policy.xml')) {
         if (-not (Test-Path -LiteralPath (Join-Path $Publish $required))) { throw ('В публикации отсутствует обязательная зависимость: ' + $required) }

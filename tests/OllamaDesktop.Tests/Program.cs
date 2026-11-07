@@ -8,7 +8,7 @@ using OllamaDesktop.Core;
 namespace OllamaDesktop.Tests;
 internal static class Program
 {
-    private static UpdateManifest ValidUpdate() => new() { ProductId="OllamaDesktopAssistant",Version="0.2.0",Channel="stable",MinimumVersion="0.1.31",InstallerUrl=UpdateFeed.DownloadPrefix+"v0.2.0/Setup.exe",InstallerSha256=new string('A',64),InstallerBytes=500000,InventoryUrl=UpdateFeed.DownloadPrefix+"v0.2.0/installed-files.json",InventorySha256=new string('B',64),Notes="Test" };
+    private static UpdateManifest ValidUpdate() => new() { ProductId="OllamaDesktopAssistant",Version="0.2.0",Channel="stable",MinimumVersion="0.1.32",InstallerUrl=UpdateFeed.DownloadPrefix+"v0.2.0/Setup.exe",InstallerSha256=new string('A',64),InstallerBytes=500000,InventoryUrl=UpdateFeed.DownloadPrefix+"v0.2.0/installed-files.json",InventorySha256=new string('B',64),Notes="Test" };
     private static readonly List<object> Results = [];
     private static int _failures;
     private static readonly string Root = Path.Combine(Path.GetTempPath(), "OllamaDesktop-Tests-" + Guid.NewGuid().ToString("N"));
@@ -17,6 +17,7 @@ internal static class Program
     private static string Id() => Guid.NewGuid().ToString("N");
     public static async Task<int> Main(string[] args)
     {
+        Environment.SetEnvironmentVariable("MAGICK_CONFIGURE_PATH",AppContext.BaseDirectory);
         if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine("These acceptance tests require Windows x64, including native PDFium and DPAPI."); return 2; }
         await Test("update-semver-beta-before-stable", () => { True(ReleaseVersion.Parse("0.2.0-beta.2").CompareTo(ReleaseVersion.Parse("0.2.0-beta.10")) < 0); True(ReleaseVersion.Parse("0.2.0-beta.10").CompareTo(ReleaseVersion.Parse("0.2.0")) < 0); });
         await Test("update-semver-reject-invalid", () => { foreach(var v in new[]{"../1.0.0","01.0.0","1.0","1.2.3-rc.1","v1.2.3/evil"}) { bool rejected=false; try{ReleaseVersion.Parse(v);}catch{rejected=true;} True(rejected); } });
@@ -32,17 +33,17 @@ internal static class Program
             var data=Encoding.UTF8.GetBytes(JsonDefaults.Write(ValidUpdate())); var sig=a.SignData(data,System.Security.Cryptography.HashAlgorithmName.SHA256,System.Security.Cryptography.RSASignaturePadding.Pkcs1);
             bool rejected=false;try{UpdateFeed.Verify(data,sig,b.ToXmlString(false));}catch(AppException){rejected=true;}True(rejected);
         });
-        await Test("update-stable-policy", () => UpdateFeed.Validate(ValidUpdate(),"0.1.31","stable"));
-        await Test("update-beta-includes-stable", () => UpdateFeed.Validate(ValidUpdate(),"0.1.31","beta"));
-        await Test("update-stable-rejects-beta", () => { var m=ValidUpdate();m.Channel="beta";m.Version="0.2.0-beta.1"; bool rejected=false;try{UpdateFeed.Validate(m,"0.1.31","stable");}catch(AppException){rejected=true;}True(rejected); });
+        await Test("update-stable-policy", () => UpdateFeed.Validate(ValidUpdate(),"0.1.32","stable"));
+        await Test("update-beta-includes-stable", () => UpdateFeed.Validate(ValidUpdate(),"0.1.32","beta"));
+        await Test("update-stable-rejects-beta", () => { var m=ValidUpdate();m.Channel="beta";m.Version="0.2.0-beta.1"; bool rejected=false;try{UpdateFeed.Validate(m,"0.1.32","stable");}catch(AppException){rejected=true;}True(rejected); });
         await Test("update-reject-downgrade-or-same", () => {foreach(var current in new[]{"0.2.0","0.3.0"}){bool rejected=false;try{UpdateFeed.Validate(ValidUpdate(),current,"stable");}catch(AppException){rejected=true;}True(rejected);}});
-        await Test("update-reject-unsupported-base", () => {var m=ValidUpdate();m.MinimumVersion="0.2.0";bool rejected=false;try{UpdateFeed.Validate(m,"0.1.31","stable");}catch(AppException){rejected=true;}True(rejected);});
+        await Test("update-reject-unsupported-base", () => {var m=ValidUpdate();m.MinimumVersion="0.2.0";bool rejected=false;try{UpdateFeed.Validate(m,"0.1.32","stable");}catch(AppException){rejected=true;}True(rejected);});
         await Test("update-reject-untrusted-downloads", () => {foreach(var url in new[]{"http://github.com/AlexFenixQ/OllamaDesktopAssistant/releases/download/v0.2.0/Setup.exe","https://evil.example/Setup.exe","https://github.com/other/repo/releases/download/v0.2.0/Setup.exe",UpdateFeed.DownloadPrefix+"v0.2.0/../Setup.exe",UpdateFeed.DownloadPrefix+"v0.2.0/Setup.exe?token=x"}){bool rejected=false;try{UpdateFeed.ValidateUrl(url,"0.2.0");}catch(AppException){rejected=true;}True(rejected);}});
-        await Test("update-reject-hash-and-size", () => {foreach(var m in new[]{ValidUpdate(),ValidUpdate()}){if(m.InstallerSha256.Length==64)m.InstallerSha256="invalid";bool rejected=false;try{UpdateFeed.Validate(m,"0.1.31","stable");}catch(AppException){rejected=true;}True(rejected);}var tooLarge=ValidUpdate();tooLarge.InstallerBytes=300_000_001;bool failed=false;try{UpdateFeed.Validate(tooLarge,"0.1.31","stable");}catch(AppException){failed=true;}True(failed);});
+        await Test("update-reject-hash-and-size", () => {foreach(var m in new[]{ValidUpdate(),ValidUpdate()}){if(m.InstallerSha256.Length==64)m.InstallerSha256="invalid";bool rejected=false;try{UpdateFeed.Validate(m,"0.1.32","stable");}catch(AppException){rejected=true;}True(rejected);}var tooLarge=ValidUpdate();tooLarge.InstallerBytes=300_000_001;bool failed=false;try{UpdateFeed.Validate(tooLarge,"0.1.32","stable");}catch(AppException){failed=true;}True(failed);});
         await Test("update-feed-channel-and-draft-selection", () => {
             object Release(string tag,bool beta,bool draft=false)=>new{tag_name=tag,prerelease=beta,draft,assets=new[]{new{name="update.json",browser_download_url=UpdateFeed.DownloadPrefix+tag+"/update.json"}}};
             var json=JsonSerializer.Serialize(new[]{Release("v0.2.0",false),Release("v0.3.0-beta.1",true),Release("v0.4.0",false,true)});
-            Equal("v0.2.0",UpdateFeed.Candidates(json,"0.1.31","stable").First().Tag);Equal("v0.3.0-beta.1",UpdateFeed.Candidates(json,"0.1.31","beta").First().Tag);
+            Equal("v0.2.0",UpdateFeed.Candidates(json,"0.1.32","stable").First().Tag);Equal("v0.3.0-beta.1",UpdateFeed.Candidates(json,"0.1.32","beta").First().Tag);
         });
         await Test("update-options-backward-compatible", () => {var settings=JsonDefaults.Read<AppSettings>("{\"textModel\":\"gpt-oss:120b\",\"theme\":\"Light\"}");SettingsStore.Validate(settings);Equal("stable",settings.UpdateChannel);True(settings.AutomaticUpdateChecks);Equal("Light",settings.Theme);});
         await Test("project-rename-retains-chat-context", () => {var store=new ChatStore(Paths);store.Initialize();var p=new WorkspaceProject{Name="Before",Instructions="instruction",MemoryNotes="memory"};store.SaveProject(p);var c=new Conversation{ProjectId=p.Id};store.SaveConversation(c);p.Name="After";store.SaveProject(p);Equal("After",store.GetProject(p.Id)!.Name);Equal("memory",store.GetProject(p.Id)!.MemoryNotes);Equal(p.Id,store.List().First(x=>x.Id==c.Id).ProjectId);});
@@ -207,13 +208,11 @@ internal static class Program
         await Test("image-extension-mismatch", () => Reject(() => FileGuard.CheckImageExtension(".jpg", "PNG")));
         await Test("text-ingestion-cyrillic", () => { var a = ImportBytes(Encoding.UTF8.GetBytes("Первый абзац\nВторой абзац"), ".txt"); True(a.Segments.Any(s => s.Text.Contains("Второй"))); });
         await Test("png-native-ingestion", () => { var file = Path.Combine(Root, Id() + ".png"); PngWriter.WriteBgra(file, 2, 2, 8, Enumerable.Repeat((byte)255, 16).ToArray()); var a = ImportBytes(File.ReadAllBytes(file), ".png"); Equal(1, a.Visuals.Count); True(File.Exists(Paths.Resolve(a.Visuals[0].RelativePath))); });
-        await Test("magick-policy-denies-svg", () =>
-        {
-            var denied = false;
-            try { using var image = new ImageMagick.MagickImage(Encoding.UTF8.GetBytes("<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2'><rect width='2' height='2'/></svg>"), new ImageMagick.MagickReadSettings { Format = ImageMagick.MagickFormat.Svg }); }
-            catch (ImageMagick.MagickException e) { if (!e.GetType().Name.Contains("Policy", StringComparison.Ordinal)) throw; denied = true; }
-            True(denied);
-        });
+        await Test("svg-safe-native-rasterization", () => {var a=ImportBytes(Encoding.UTF8.GetBytes("<svg xmlns='http://www.w3.org/2000/svg' width='32' height='24'><rect width='32' height='24' fill='red'/></svg>"),".svg");Equal(1,a.Visuals.Count);});
+        await Test("svg-external-http-case-and-base-rejected",()=>{foreach(var x in new[]{"<svg><image href='https://example.com/a.png'/></svg>","<svg><image HREF='file:///private.png'/></svg>","<svg xml:base='https://example.com/'><use href='#id'/></svg>"})Reject(()=>ImageFormats.ValidateSvg(Encoding.UTF8.GetBytes(x)));});
+        await Test("svg-external-local-file-rejected",()=>Reject(()=>ImageFormats.ValidateSvg(Encoding.UTF8.GetBytes("<svg xmlns='http://www.w3.org/2000/svg'><image href='file:///C:/private.png'/></svg>"))));
+        await Test("svg-dtd-and-script-rejected",()=>{foreach(var x in new[]{"<!DOCTYPE svg [<!ENTITY x SYSTEM 'file:///private'>]><svg>&x;</svg>","<svg><script>alert(1)</script></svg>"})Reject(()=>ImageFormats.ValidateSvg(Encoding.UTF8.GetBytes(x)));});
+        await Test("svg-encoded-external-css-rejected",()=>{foreach(var x in new[]{"<svg><style>rect{fill:u&#114;l(file:///private.png)}</style></svg>","<svg><style>rect{fill:u\\72l(file:///private.png)}</style></svg>"})Reject(()=>ImageFormats.ValidateSvg(Encoding.UTF8.GetBytes(x)));});
         await Test("pdf-text-and-native-render", () => { var a = ImportBytes(MakePdf(), ".pdf"); True(a.Segments.Any(s => s.Text.Contains("Hello PDF"))); Equal(1, a.Visuals.Count); });
         await Test("generate-docx-and-extract", () =>
         {
@@ -493,6 +492,43 @@ internal static class Program
             True(seenFirst&&seenLast);True(summaries>=3);Equal(1,finals);Equal(1,result.Artifacts.Count);
         });
 
+
+        await Test("image-multipage-tiff-nine-pages-kept",()=>{using var pages=new ImageMagick.MagickImageCollection();for(var i=0;i<9;i++)pages.Add(new ImageMagick.MagickImage(new ImageMagick.MagickColor((byte)(i*20),30,90),32,24));using var ms=new MemoryStream();pages.Write(ms,ImageMagick.MagickFormat.Tiff);var a=ImportBytes(ms.ToArray(),".tiff");Equal(9,a.Visuals.Count);});
+        await Test("image-psd-composite-warning",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.Red,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Psd),".psd");Equal(1,a.Visuals.Count);True(a.Warnings.Any(x=>x.Contains("сведённое")));});
+        await Test("image-raw-and-modern-extensions-admitted",()=>{foreach(var ext in new[]{".heic",".avif",".jxl",".dng",".nef",".cr3",".psd",".gif",".jxr"})Equal(ext,FileGuard.Extension("sample"+ext));});
+        await TestAsync("native-codec-matrix-includes-real-avi-audio",async()=>{var decoders=await MediaTools.RunAsync("ffmpeg",["-hide_banner","-decoders"],TimeSpan.FromSeconds(20),CancellationToken.None);foreach(var codec in new[]{"pcm_mulaw","pcm_alaw","msvideo1","cinepak","msmpeg4v3","dvvideo","ffv1","huffyuv","ac3","eac3","libaom-av1"})True(decoders.Contains(codec,StringComparison.OrdinalIgnoreCase));});
+        await TestAsync("avi-msvideo1-mulaw-decodes-audio-and-frames",async()=>{
+            var photo=Paths.Resolve("Staging/"+Id()+".jpg");using(var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.Blue,64,48))image.Write(photo);
+            var wav=Paths.Resolve("Staging/"+Id()+".wav");using(var b=new BinaryWriter(File.Create(wav))){b.Write(Encoding.ASCII.GetBytes("RIFF"));b.Write(36+64000);b.Write(Encoding.ASCII.GetBytes("WAVEfmt "));b.Write(16);b.Write((short)1);b.Write((short)1);b.Write(16000);b.Write(32000);b.Write((short)2);b.Write((short)16);b.Write(Encoding.ASCII.GetBytes("data"));b.Write(64000);for(var i=0;i<32000;i++)b.Write((short)(Math.Sin(i*0.1)*5000));}
+            var avi=Paths.Resolve("Staging/"+Id()+".avi");await MediaTools.RunAsync("ffmpeg",["-hide_banner","-v","error","-nostdin","-n","-loop","1","-framerate","2","-i",photo,"-i",wav,"-t","2","-c:v","msvideo1","-pix_fmt","rgb555le","-c:a","pcm_mulaw",avi],TimeSpan.FromSeconds(30),CancellationToken.None);
+            var probe=await MediaTools.ProbeAsync(avi,CancellationToken.None);True(probe.Audio&&probe.Video);var sound=Paths.Resolve("Staging/"+Id()+".wav");await MediaTools.AudioChunkAsync(avi,sound,0,2,CancellationToken.None);True(new FileInfo(sound).Length>60000);var frame=Paths.Resolve("Staging/"+Id()+".jpg");await MediaTools.FrameAsync(avi,frame,0.5,CancellationToken.None);True(File.Exists(frame));
+        });
+        await Test("image-native-roundtrip-gif",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Gif),".gif");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-avif",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Avif),".avif");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-heic-hevc-decoding",()=>{var bytes=File.ReadAllBytes(FindFixture("Formats/RGB_8__128x128.heif"));var a=ImportBytes(bytes,".heif");Equal(1,a.Visuals.Count);});
+        await Test("image-synthetic-dng-bayer-decoding",()=>{var a=ImportBytes(File.ReadAllBytes(FindFixture("Formats/synthetic-bayer.dng")),".dng");Equal(1,a.Visuals.Count);True(a.Warnings.Any(x=>x.Contains("RAW/HDR")));});
+        await Test("image-native-roundtrip-jxl",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Jxl),".jxl");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-jp2",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Jp2),".jp2");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-ico",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Ico),".ico");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-dds",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Dds),".dds");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-pcx",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Pcx),".pcx");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-tga",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Tga),".tga");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-exr",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Exr),".exr");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-hdr",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Hdr),".hdr");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-ppm",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Ppm),".ppm");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-pam",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Pam),".pam");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+        await Test("image-native-roundtrip-pfm",()=>{using var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.CornflowerBlue,64,48);var a=ImportBytes(image.ToByteArray(ImageMagick.MagickFormat.Pfm),".pfm");True(a.Visuals.Count>0);True(a.Visuals.All(v=>File.Exists(Paths.Resolve(v.RelativePath))));});
+
+
+        await TestAsync("av1-software-decoder-reads-real-avif-bitstream",async()=>{var file=Paths.Resolve("Staging/"+Id()+".avif");using(var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.Green,64,48))image.Write(file);await MediaTools.RunAsync("ffmpeg",["-hide_banner","-v","error","-nostdin","-protocol_whitelist","file","-i",file,"-frames:v","1","-f","null","-"],TimeSpan.FromSeconds(30),CancellationToken.None);});
+        await Test("gif-animation-keeps-whole-timeline",()=>{using var frames=new ImageMagick.MagickImageCollection();foreach(var color in new[]{ImageMagick.MagickColors.Red,ImageMagick.MagickColors.Green,ImageMagick.MagickColors.Blue}){var image=new ImageMagick.MagickImage(color,64,48){AnimationDelay=100};frames.Add(image);}using var stream=new MemoryStream();frames.Write(stream,ImageMagick.MagickFormat.Gif);var a=ImportBytes(stream.ToArray(),".gif");True(a.Visuals.Count>=3&&a.Visuals.Count<=24);True(a.Visuals.Any(x=>x.Reference.Contains("кадр 3 из 3")));True(a.Warnings.Any(x=>x.Contains("равномерно")));});
+
+
+        await TestAsync("audio-cover-art-is-not-a-video-track",async()=>{var cover=Paths.Resolve("Staging/"+Id()+".jpg");using(var image=new ImageMagick.MagickImage(ImageMagick.MagickColors.Red,32,24))image.Write(cover);var file=Paths.Resolve("Staging/"+Id()+".m4a");await MediaTools.RunAsync("ffmpeg",["-hide_banner","-v","error","-nostdin","-n","-i",FindFixture("Media/conference-video.mp4"),"-i",cover,"-map","0:a:0","-map","1:v:0","-t","2","-c:a","aac","-c:v","copy","-disposition:v:0","attached_pic","-f","mp4",file],TimeSpan.FromSeconds(30),CancellationToken.None);var probe=await MediaTools.ProbeAsync(file,CancellationToken.None);True(probe.Audio&&!probe.Video);});
+
+
+        await Test("avi-unknown-service-track-does-not-extend-duration",()=>{var p=MediaTools.ParseProbe("""{"format":{"duration":"2296.422588"},"streams":[{"codec_type":"video","codec_name":"hevc","duration":"1799.978040","width":1920,"height":1080,"nb_frames":"45000"},{"codec_type":"audio","codec_name":"pcm_mulaw"},{"codec_type":"audio","duration":"2296.422588"}]}""");Equal(1799.978040,p.Duration);True(p.Audio&&p.Video);Equal(1,p.UnknownTracks);Equal(2,p.AudioTracks);});
+
         var report = args.Length == 2 && args[0] == "--report" ? args[1] : Path.Combine(Environment.CurrentDirectory, "tests.json");
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(report))!);
         File.WriteAllText(report, JsonDefaults.Write(new { version = BuildInfo.Version, utc = DateTimeOffset.UtcNow, platform = "Windows x64", count = Results.Count, failed = _failures, cloudRequests = 0, tests = Results }));
@@ -501,6 +537,7 @@ internal static class Program
         return _failures == 0 ? 0 : 1;
     }
 
+    private static string FindFixture(string relative){DirectoryInfo? folder=new DirectoryInfo(AppContext.BaseDirectory);while(folder is not null&&!File.Exists(Path.Combine(folder.FullName,"test_data",relative)))folder=folder.Parent;return Path.Combine(folder?.FullName??throw new Exception("Fixture missing"),"test_data",relative);}
     private static void RejectSpec(Action action)
     {
         try { action(); } catch(AppException e) when(e.Code=="DOCUMENT_SPEC") { return; }

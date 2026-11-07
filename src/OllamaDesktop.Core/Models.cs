@@ -5,7 +5,7 @@ namespace OllamaDesktop.Core;
 
 public static class BuildInfo
 {
-    public const string Version = "0.1.31";
+    public const string Version = "0.1.32";
     public const string Product = "Ollama Desktop";
     public const int SchemaVersion = 1;
 }

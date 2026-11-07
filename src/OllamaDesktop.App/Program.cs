@@ -35,7 +35,7 @@ public static class Program
             if (FileGuard.IsMedia("file"+job.Extension)) {
                 var progress=new Progress<string>(stage=>{ lock(Console.Error) { Console.Error.WriteLine(JsonDefaults.Write(new { stage })); Console.Error.Flush(); } });
                 result=new WorkerResult { Attachment=new MediaExtraction(paths).ExtractAsync(job,progress,CancellationToken.None).GetAwaiter().GetResult() };
-            } else result = new WorkerResult { Attachment = new ExtractionEngine(paths).Extract(job) };
+            } else result = new WorkerResult { Attachment = new ExtractionEngine(paths,Infrastructure.WindowsImageDecoder.Decode).Extract(job) };
         }
         catch (Exception e)
         {

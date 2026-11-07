@@ -7,7 +7,7 @@ if(-not (Test-Path -LiteralPath $marker)){throw 'Приложение ещё н�
 $before=Get-Content -LiteralPath $marker -Raw -Encoding UTF8 | ConvertFrom-Json
 if($before.productId -ne 'OllamaDesktopAssistant'){throw 'Неизвестная установка.'}
 if($before.version -eq $Version){Write-Host 'Эта версия уже установлена.';return}
-if($before.version -ne '0.1.30'){throw 'Этот переход проверен только с версии 0.1.30. Неизвестная база не изменяется.'}
+if($before.version -ne '0.1.31'){throw 'Этот переход проверен только с версии 0.1.31. Неизвестная база не изменяется.'}
 if(Get-Process -Name 'OllamaDesktop' -ErrorAction SilentlyContinue){throw 'Закройте Ollama Desktop и повторите запуск Update.ps1. Незавершённые операции принудительно не останавливаются.'}
 $stage=Join-Path $env:LOCALAPPDATA ('OllamaDesktopAssistant\Updates\'+[Guid]::NewGuid().ToString('N'))
 New-OwnedDirectory $stage

@@ -24,22 +24,22 @@ foreach($case in @('installer-failure-restores-app','successful-update-preserves
     Move-Item -LiteralPath (Join-Path $install 'Setup.exe') -Destination (Join-Path $install 'OllamaDesktop.exe')
     [IO.File]::WriteAllText((Join-Path $updateHome 'Data\history.db'),'synthetic history')
     [IO.File]::WriteAllText((Join-Path $updateHome 'Data\key.dpapi'),'synthetic encrypted key fixture')
-    WriteJson (Join-Path $install 'release-installed.json') @{productId='OllamaDesktopAssistant';version='0.1.30';dataSchema=1}
+    WriteJson (Join-Path $install 'release-installed.json') @{productId='OllamaDesktopAssistant';version='0.1.31';dataSchema=1}
     $old=@(Get-ChildItem -LiteralPath $install -File | ForEach-Object {[pscustomobject]@{path=$_.Name;sha256=(Hash $_.FullName);bytes=$_.Length}})
-    WriteJson (Join-Path $install 'installed-files.json') @{version='0.1.30';files=$old}
+    WriteJson (Join-Path $install 'installed-files.json') @{version='0.1.31';files=$old}
     $oldHash=Hash (Join-Path $install 'file-0.txt');$dataHash=Hash (Join-Path $updateHome 'Data\history.db');$keyHash=Hash (Join-Path $updateHome 'Data\key.dpapi')
     Get-ChildItem -LiteralPath $stub -File | Copy-Item -Destination $stage
     $payload=Join-Path $stage 'payload';New-Item -ItemType Directory -Path $payload | Out-Null
     Get-ChildItem -LiteralPath $install -File | Where-Object Name -ne 'installed-files.json' | Copy-Item -Destination $payload
     [IO.File]::WriteAllText((Join-Path $payload 'file-0.txt'),'updated')
-    WriteJson (Join-Path $payload 'release-installed.json') @{productId='OllamaDesktopAssistant';version='0.1.31';dataSchema=1}
+    WriteJson (Join-Path $payload 'release-installed.json') @{productId='OllamaDesktopAssistant';version='0.1.32';dataSchema=1}
     $new=@(Get-ChildItem -LiteralPath $payload -File | ForEach-Object {[pscustomobject]@{path=$_.Name;sha256=(Hash $_.FullName);bytes=$_.Length}})
-    WriteJson (Join-Path $stage 'installed-files.json') @{version='0.1.31';files=$new}
-    $m=@{productId='OllamaDesktopAssistant';version='0.1.31';channel='stable';minimumVersion='0.1.30';installerSha256=(Hash (Join-Path $stage 'Setup.exe'));installerBytes=(Get-Item (Join-Path $stage 'Setup.exe')).Length;inventorySha256=(Hash (Join-Path $stage 'installed-files.json'))}
+    WriteJson (Join-Path $stage 'installed-files.json') @{version='0.1.32';files=$new}
+    $m=@{productId='OllamaDesktopAssistant';version='0.1.32';channel='stable';minimumVersion='0.1.31';installerSha256=(Hash (Join-Path $stage 'Setup.exe'));installerBytes=(Get-Item (Join-Path $stage 'Setup.exe')).Length;inventorySha256=(Hash (Join-Path $stage 'installed-files.json'))}
     WriteJson (Join-Path $stage 'update.json') $m
     $sig=$rsa.SignData([IO.File]::ReadAllBytes((Join-Path $stage 'update.json')),'SHA256');if($case -eq 'tampered-signature-rejected'){$sig[0]=$sig[0] -bxor 1}
     [IO.File]::WriteAllBytes((Join-Path $stage 'update.json.sig'),$sig)
-    WriteJson (Join-Path $stage 'job.json') @{productId='OllamaDesktopAssistant';installDirectory=$install;fromVersion='0.1.30';channel='stable';pid=2147483640;processStart=0}
+    WriteJson (Join-Path $stage 'job.json') @{productId='OllamaDesktopAssistant';installDirectory=$install;fromVersion='0.1.31';channel='stable';pid=2147483640;processStart=0}
     if($case -eq 'installer-failure-restores-app'){[IO.File]::WriteAllText((Join-Path $stage 'fail.flag'),'fail')}
     if($case -eq 'unknown-base-file-rejected'){[IO.File]::WriteAllText((Join-Path $install 'unknown.txt'),'must not overwrite')}
     $worker=[IO.File]::ReadAllText((Join-Path $source 'scripts\Apply-Update.ps1'))

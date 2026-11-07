@@ -15,7 +15,7 @@
    <CheckBox x:Name="Consent" Margin="0,20,0,10"><TextBlock Text="Я понимаю, что запросы, выбранная история, извлечённый текст и подготовленные изображения передаются в Ollama Cloud. Обработка зависит от интернета и лимитов моего аккаунта." TextWrapping="Wrap" MaxWidth="590"/></CheckBox>
    <TextBlock Text="Ключ шифруется Windows DPAPI для текущего пользователя. История и локальные копии файлов хранятся на этом компьютере, без отдельного шифрования приложением. Скрытой телеметрии нет." TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" FontSize="12"/>
    <TextBlock Text="Тема оформления" Margin="0,20,0,6"/><ComboBox x:Name="ThemeChoice" AutomationProperties.Name="Тема оформления"><ComboBoxItem Content="Тёмная" Tag="Dark"/><ComboBoxItem Content="Светлая" Tag="Light"/></ComboBox>
-   <TextBlock Text="Форматы: DOCX, XLSX, PPTX, PDF, TXT, CSV, JPEG, PNG, WebP, BMP, TIFF. Старые DOC/XLS/PPT, файлы с паролем и документы с макросами в этой версии не поддерживаются." TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" Margin="0,20,0,10" FontSize="12"/>
+   <TextBlock Text="Форматы: документы и ZIP, распространённые аудио/видео, HEIC/AVIF/GIF, JPEG XL, RAW, PSD, JPEG XR, SVG и обычные изображения. Поддержка зависит от содержимого и встроенных кодеков. Старые DOC/XLS/PPT, файлы с паролем и документы с макросами в этой версии не поддерживаются." TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" Margin="0,20,0,10" FontSize="12"/>
   </StackPanel></ScrollViewer>
  </DockPanel>
 </Window>

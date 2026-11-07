@@ -72,7 +72,7 @@ public partial class MainWindow : Window, IUserDialogs
     }
     public string[] PickFiles()
     {
-        var dialog = new OpenFileDialog { Title = "Выберите вложения", Multiselect = true, CheckFileExists = true, Filter = "Поддерживаемые файлы|*.docx;*.xlsx;*.pptx;*.pdf;*.txt;*.csv;*.jpg;*.jpeg;*.png;*.webp;*.bmp;*.tif;*.tiff;*.zip;*.wav;*.mp3;*.m4a;*.aac;*.flac;*.ogg;*.opus;*.mp4;*.mov;*.mkv;*.webm;*.avi;*.wmv;*.wma;*.mpg;*.mpeg;*.ts|Все файлы|*.*" };
+        var dialog = new OpenFileDialog { Title = "Выберите вложения", Multiselect = true, CheckFileExists = true, Filter = "Все файлы|*.*|Видео и аудио|"+string.Join(";",FileGuard.MediaExtensions.Select(e=>"*"+e))+"|Изображения|"+string.Join(";",ImageFormats.Extensions.Select(e=>"*"+e))+"|Документы и ZIP|*.docx;*.xlsx;*.pptx;*.pdf;*.txt;*.csv;*.zip" };
         return dialog.ShowDialog(this) == true ? dialog.FileNames : [];
     }
     public string? PasteImage()
