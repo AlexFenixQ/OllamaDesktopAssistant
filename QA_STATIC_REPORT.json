@@ -1,0 +1,11 @@
+{
+  "version": "0.1.29",
+  "windowsTestsRun": true,
+  "windowsTestCount": 102,
+  "wpfChecks": 12,
+  "powershellChecks": 52,
+  "manifestVerified": true,
+  "liveCloudTested": false,
+  "cleanWindowsInstallerExecuted": false,
+  "notes": "No inherited Linux/static test claims are used as runtime evidence. See verification reports."
+}

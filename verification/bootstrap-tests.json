@@ -1,0 +1,270 @@
+﻿{
+    "version":  "0.1.30",
+    "suite":  "PowerShell bootstrap/update",
+    "executedOnWindows":  true,
+    "powershell":  "5.1.26100.9711",
+    "total":  52,
+    "failed":  0,
+    "cases":  [
+                  {
+                      "name":  "ZIP: valid Unicode and spaces",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: existing target is preserved",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects traversal",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects absolute",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects unc",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects ads",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects reserved",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects dotsegment",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects trailingdot",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects trailingspace",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects emptysegment",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: case-insensitive duplicate",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: file/directory collision",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "ZIP: rejects 260-character path BEFORE extraction",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "SDK: original regression fits the new cache path",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: refuses path traversal",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: verifies original, backup and rollback; unrelated file preserved",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: refuses modified baseline",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source rollback: refuses unexpected edits without overwriting them",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: orphan old attempt without state.json is preserved",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: active transaction is discovered from valid receipt",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: historical 0.1.6 transaction is not misclassified",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: current receipt recognized",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Inno: canonical version parser",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: unexpected transaction marker is rejected",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "PowerShell 5.1: every script uses UTF-8 BOM and is syntactically valid",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: fixture paths use current release version",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: 0.1.10 baseline recognized",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: 0.1.9 baseline recognized",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Release contract: test status defines expectedTotalWindowsTests",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Release: test count matches declared contract before build",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Test report: matching count accepted, missing tests rejected",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Test report: wrong version and duplicate cases rejected",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: 0.1.11 predecessor transaction is recognized",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: attempts match current release",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: every predecessor has a verified MANIFEST record",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: historical inspection cannot change release context",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: known MANIFEST can be replaced",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: untracked MANIFEST cannot be overwritten",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Source update: last known version creates correct receipt path",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Inno upgrade: stable AppId and strictly gated in-place upgrade",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Upgrade: verified manifest permits known files only",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Upgrade: archive backup checks actual file hashes",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Upgrade: nested localized DLL backup paths",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Upgrade: permit binds both tracked manifests to release",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Compatibility: Windows 10 setup minimum is 10240",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Compatibility: WPF startup does not require Windows 11",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Compatibility: owner bootstrap accepts Win10 while retaining CPU checks",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Compatibility: target diagnostics script is included",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Diagnostics: redacts bearer secrets and local paths",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Rollback: partially updated known files accepted, unknown content rejected",
+                      "passed":  true,
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "Upgrade: removes only verified retired files and empty owned folders",
+                      "passed":  true,
+                      "detail":  ""
+                  }
+              ]
+}

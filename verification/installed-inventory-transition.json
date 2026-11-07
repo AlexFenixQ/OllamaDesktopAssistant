@@ -1,0 +1,17 @@
+﻿{
+    "version":  "0.1.30",
+    "passed":  true,
+    "realInstalledBase":  "0.1.29",
+    "oldFiles":  491,
+    "newFiles":  491,
+    "checks":  [
+                   "real installed inventory verified read-only",
+                   "program-only clone backup",
+                   "partial upgrade accepted for rollback",
+                   "full file transition with obsolete cleanup",
+                   "backup extraction and old inventory verification",
+                   "real installation inventory unchanged"
+               ],
+    "actualInstallerExecuted":  false,
+    "userDataAccessed":  false
+}

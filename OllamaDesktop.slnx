@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/OllamaDesktop.Core/OllamaDesktop.Core.csproj" />
+  <Project Path="src/OllamaDesktop.App/OllamaDesktop.App.csproj" />
+  <Project Path="tests/OllamaDesktop.Tests/OllamaDesktop.Tests.csproj" />
+</Solution>

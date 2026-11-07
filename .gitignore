@@ -1,0 +1,17 @@
+**/bin/
+**/obj/
+artifacts/
+.packages/
+.build-home/
+.tools/
+.vs/
+release/*.exe
+*.zip
+*.dpapi
+*.user
+Data/
+qa-runtime/
+*.pfx
+*.p12
+*.key
+**/*private-key*

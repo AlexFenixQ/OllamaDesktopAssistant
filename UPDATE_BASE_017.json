@@ -1,0 +1,427 @@
+{
+  "productId": "OllamaDesktopAssistant",
+  "fromVersion": "0.1.7",
+  "toVersion": "0.1.30",
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 112,
+      "sha256": "DDB3E819A9694604AA83D1903BC51A8CD72A5D846F70FB885C3147365F7CD05A"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "bytes": 1879,
+      "sha256": "A6F8EB6CA38C244911A31C560F907D7F65B00EEAA8074FF6AF260DFBE2180D65"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 6397,
+      "sha256": "46397051B6B50B8AB00C4BB0F5172043DECD86782E62582157A716D1A5F23733"
+    },
+    {
+      "path": "CHECKLIST_RU.md",
+      "bytes": 4277,
+      "sha256": "558A8126B116D9348D67125EF16DB48C3C0B1E9357FA8F27A7E73FD8D6338B1E"
+    },
+    {
+      "path": "Directory.Build.props",
+      "bytes": 578,
+      "sha256": "1B838C6C81E0571900EEFED2DB3CF9F2AD3BF1A38E49B02C97CA614ACD5441D7"
+    },
+    {
+      "path": "NuGet.Config",
+      "bytes": 198,
+      "sha256": "593813D027AE058C94C59138C6618D9B3526A825D91DB6E0E3BEC2C5D60C07FC"
+    },
+    {
+      "path": "OllamaDesktop.slnx",
+      "bytes": 235,
+      "sha256": "05E11B1A4514C7B1F9067C884A6AB497A5255FC4286F2B3B9BACD92162461E16"
+    },
+    {
+      "path": "QA_STATIC_REPORT.json",
+      "bytes": 3484,
+      "sha256": "2143F23216E76E68B41C8E9006214EC19D595C11E6B0378FE89F93D6A8F4B7BD"
+    },
+    {
+      "path": "README_RU.md",
+      "bytes": 30435,
+      "sha256": "5F9581EA5501E827EB02E9E3AAB373E3A1828C26BD191328DCADDBF87B966C25"
+    },
+    {
+      "path": "RELEASE.json",
+      "bytes": 592,
+      "sha256": "5D0B864B5464C62BBCC216FB069EBF0521B28232E483EF5A4FDDFB39627BA7DB"
+    },
+    {
+      "path": "Repair.ps1",
+      "bytes": 734,
+      "sha256": "19440AE61E13293FB617E398D46E52BA99FC5D82CA0E795754502CB404BE566B"
+    },
+    {
+      "path": "SECURITY.md",
+      "bytes": 5086,
+      "sha256": "31AF668ED7E43091BD7589286B2AD8DC2FD63B14330C6ABC969DBD8CC67DFBD3"
+    },
+    {
+      "path": "START.cmd",
+      "bytes": 170,
+      "sha256": "67DCF495AD5BFA528B53E6FA7501B7D1A98749373E0F6001D241945FD4E5B187"
+    },
+    {
+      "path": "Start.ps1",
+      "bytes": 2611,
+      "sha256": "16FBBBDF46D1EFED53E4660D83F31B66903FFC241A665EFFDD3919393E2C278E"
+    },
+    {
+      "path": "TEST_STATUS.json",
+      "bytes": 343,
+      "sha256": "7EF27C590EECECC1C619A21809F482A175EB863670EFE4B52805093B638C1AD3"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 3427,
+      "sha256": "7957F056F057EB15B4D95EAB2451DF92901EEFAE1599CF82FEAC0A8EA6006650"
+    },
+    {
+      "path": "UPDATE_BASE_010.json",
+      "bytes": 11745,
+      "sha256": "E43CD5C167CF183B63CA3EBB50FA8AE05E9AA2CC97D35E2DD8EE907EA9D0992C"
+    },
+    {
+      "path": "UPDATE_BASE_011.json",
+      "bytes": 12859,
+      "sha256": "DB1DD1A967041E1458D86291BD59D488C27E4393D4C7A1A1B9D8726B3E9C8268"
+    },
+    {
+      "path": "UPDATE_BASE_012.json",
+      "bytes": 13020,
+      "sha256": "14B6A627962F1D275650E92D73F1F54EDDA307E978D8F5E0668EC3CD8BB264F1"
+    },
+    {
+      "path": "UPDATE_BASE_013.json",
+      "bytes": 12869,
+      "sha256": "384DD264520FFB9B1A3D1EA63FC6F03AC32A330BE8DE55A534A296669FA36C45"
+    },
+    {
+      "path": "UPDATE_BASE_014.json",
+      "bytes": 13331,
+      "sha256": "1CF60722CF8DF9A12F73DAEA25D76209C02D154665BF38981DD5DFC88B721A7A"
+    },
+    {
+      "path": "UPDATE_BASE_015.json",
+      "bytes": 13487,
+      "sha256": "1AE4AF51FDB69244AE074462594BE2B40F2978F67E330FE255503F1A47012185"
+    },
+    {
+      "path": "UPDATE_BASE_016.json",
+      "bytes": 13643,
+      "sha256": "6C201BC5487F5D722ED602B19687C84733539F2A74AD526108E25586A6F7A967"
+    },
+    {
+      "path": "deployment/OllamaDesktop.iss",
+      "bytes": 2560,
+      "sha256": "CDBC332C380BD05AB36555E1EF76F4D0CF9CEC5D73CECE9798FF86EFD6FBFEB9"
+    },
+    {
+      "path": "global.json",
+      "bytes": 104,
+      "sha256": "48298858C2826F4CC9AB7AD3366DF926A6195ED4E0594750992FC8C381659122"
+    },
+    {
+      "path": "scripts/Apply-SourceUpdate.ps1",
+      "bytes": 7274,
+      "sha256": "F45ECF4D0C85486F11F5D249D9FC049A24D222259B674A777F477867C61F9DF2"
+    },
+    {
+      "path": "scripts/Bootstrap.ps1",
+      "bytes": 5950,
+      "sha256": "A7AD54FCA7292DD8B18E29D04C04FE64E65F162D2F27BE555CDEF90D27DC3481"
+    },
+    {
+      "path": "scripts/Build.ps1",
+      "bytes": 4518,
+      "sha256": "555948C54F9DB6C56645766F6E0B264F815EFA7D0E3E526FC1A8DEBE19F454F5"
+    },
+    {
+      "path": "scripts/Collect-Diagnostics.ps1",
+      "bytes": 2870,
+      "sha256": "849FDF0691F100F41C47D57A5C2F590626EFAA77690DFEB8EFEBF7064D1ACA02"
+    },
+    {
+      "path": "scripts/Collect-Notices.ps1",
+      "bytes": 5735,
+      "sha256": "31EB407C7F8FBA5770231CA5C1EA0C019F29DAA043BF7C54FF6E5455A83B63D5"
+    },
+    {
+      "path": "scripts/Common.ps1",
+      "bytes": 12831,
+      "sha256": "60F435B352545C56604094C2428C99D34E1B05B6ABDDC077F1239FEC4C1B8931"
+    },
+    {
+      "path": "scripts/Inno-Version.ps1",
+      "bytes": 402,
+      "sha256": "73E93B60194FE343775952E116E2B463DAAC84A163036BBB2D6359379F2764F3"
+    },
+    {
+      "path": "scripts/Package.ps1",
+      "bytes": 2555,
+      "sha256": "FF9A4E7FDA0793A7EC1599DB1EA1E9B1814F99BE0D205C8CAFB705430905B863"
+    },
+    {
+      "path": "scripts/Prepare-Inno.ps1",
+      "bytes": 2453,
+      "sha256": "A97DD6A55EB966D2F7E4FE782697A13132900F560F65253483C821344A091E70"
+    },
+    {
+      "path": "scripts/Rollback-SourceUpdate.ps1",
+      "bytes": 3118,
+      "sha256": "355FE0B2F291341DCD5B745E6E6E6C4937992F913AB4CF3CE9F65AC5AF44EF5B"
+    },
+    {
+      "path": "scripts/Rollback.ps1",
+      "bytes": 1179,
+      "sha256": "FAB5C425D59FFD4BA9123656428901ADB85A3841D0B32C677E37136CDC5360A5"
+    },
+    {
+      "path": "scripts/Run.ps1",
+      "bytes": 155,
+      "sha256": "84E25A238984E45D5684E69D5883CB2EEAE48118780F3D451CC5356A48D5A7CC"
+    },
+    {
+      "path": "scripts/SourceUpdate.Common.ps1",
+      "bytes": 9803,
+      "sha256": "E259366E0D031A702246367B303A3B42918209DAB65B2CFAAEF3A3BCADE957EC"
+    },
+    {
+      "path": "scripts/Test-Bootstrap.ps1",
+      "bytes": 13189,
+      "sha256": "261240481647F0911330622D553E08213D885F5725FCED1DC450906B751213A0"
+    },
+    {
+      "path": "scripts/Test.ps1",
+      "bytes": 413,
+      "sha256": "F34D701BF83249F7C131E30F9EC47E8A07C7978856A36B2BA3094BC8BA3D5B97"
+    },
+    {
+      "path": "scripts/Verify-Package.ps1",
+      "bytes": 1831,
+      "sha256": "781026878F63FD239FD76C27AA074292C234F34A0F2D89BCA2E9C448CD061ECB"
+    },
+    {
+      "path": "src/OllamaDesktop.App/App.xaml",
+      "bytes": 4207,
+      "sha256": "F1A9275ECFB2908060FFD6F9EDEB2823B8274AE9767A210E41BA1B65E31609BA"
+    },
+    {
+      "path": "src/OllamaDesktop.App/App.xaml.cs",
+      "bytes": 1993,
+      "sha256": "C225F8838AE1F060287B51F44F4C17FF3BEE99D91C4EEA618ACCCC55A3955554"
+    },
+    {
+      "path": "src/OllamaDesktop.App/Controls/MarkdownView.cs",
+      "bytes": 10057,
+      "sha256": "24CEC70D008643AFA8F8EF2462B18C2344BB75C67608C8F4A8CBD5A459E9123B"
+    },
+    {
+      "path": "src/OllamaDesktop.App/DialogWindow.cs",
+      "bytes": 1573,
+      "sha256": "19C8E3718C0F07A6E54DD1895DD1D1CD3571F6F7F4B28F6671DA345FE9E0AE0F"
+    },
+    {
+      "path": "src/OllamaDesktop.App/GlobalUsings.cs",
+      "bytes": 180,
+      "sha256": "1722FCE7429BF6A97267A9630D97326C94EB1EB1A16667D8C9D7884AC983E398"
+    },
+    {
+      "path": "src/OllamaDesktop.App/Infrastructure/ImportService.cs",
+      "bytes": 4363,
+      "sha256": "AC1D24E6AD1EF3A6B9D8C160B86D8835D3FD5480E33EEBC3ECCC2308AC898A4E"
+    },
+    {
+      "path": "src/OllamaDesktop.App/Infrastructure/JobGuard.cs",
+      "bytes": 2464,
+      "sha256": "EF8B3D407A168BA1C486BD68D56DE42FC875A80BF8CF340CF9D51450718C58A0"
+    },
+    {
+      "path": "src/OllamaDesktop.App/Infrastructure/SafeShell.cs",
+      "bytes": 1901,
+      "sha256": "3D455D9E1948DCB359AA9BFC436F3083A5645DF42B60199F6207FD53597597D1"
+    },
+    {
+      "path": "src/OllamaDesktop.App/MainWindow.xaml",
+      "bytes": 9782,
+      "sha256": "E890A1D4C185314B5F3AB484FA3B68B91CFFE88BA1074F68B0B744ACB1EFA65A"
+    },
+    {
+      "path": "src/OllamaDesktop.App/MainWindow.xaml.cs",
+      "bytes": 7578,
+      "sha256": "87E7D7C345AC84C6812C80F1D81E9F08549E43AA3BE6E49A0B3E1FBC7B2D8621"
+    },
+    {
+      "path": "src/OllamaDesktop.App/OllamaDesktop.App.csproj",
+      "bytes": 893,
+      "sha256": "2F762CA75629B0FFDA15A2206CBFFFF3D163BC79E5AB1E5844959D8036D78A6A"
+    },
+    {
+      "path": "src/OllamaDesktop.App/Program.cs",
+      "bytes": 1685,
+      "sha256": "10EA5AB8579D4D622A0C45E9163DF1C18E431799C5428405A565F73CAEB2BA63"
+    },
+    {
+      "path": "src/OllamaDesktop.App/Services.cs",
+      "bytes": 662,
+      "sha256": "9EA07BDC7FEFC0D4D50176E3ABF5F1B12F5988CBD5363F67644750FBEEA7ABBE"
+    },
+    {
+      "path": "src/OllamaDesktop.App/SettingsWindow.xaml",
+      "bytes": 3778,
+      "sha256": "24D66E6ACF73363B009687576A10763FFBF2086D930BED51BA83EF22C4F9EB29"
+    },
+    {
+      "path": "src/OllamaDesktop.App/SettingsWindow.xaml.cs",
+      "bytes": 5950,
+      "sha256": "19AA5E367FB18FF1966316795EC8980CFC327A6C313E1773D33E4B0EB74DAC6F"
+    },
+    {
+      "path": "src/OllamaDesktop.App/Theme.cs",
+      "bytes": 1074,
+      "sha256": "E96607690558BC6380922766BF07D34F1CE528D5F6A291F08D46F306696EE0C7"
+    },
+    {
+      "path": "src/OllamaDesktop.App/ViewModels/MainViewModel.cs",
+      "bytes": 20498,
+      "sha256": "939E30F04468B72C1B7FBBEA7D942AA514F3A60E9597A5965A5631BC0234F2E9"
+    },
+    {
+      "path": "src/OllamaDesktop.App/app.manifest",
+      "bytes": 969,
+      "sha256": "46DDC00456AA0371E89F6C9417A901BD4FB01662478EBFA8A90A95EC132421EA"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/AppPaths.cs",
+      "bytes": 3626,
+      "sha256": "204DE0DB5A8E56D9FBF61B387371172387FA160BAD7431F2A8C9C84282C5594A"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/Arithmetic.cs",
+      "bytes": 3990,
+      "sha256": "38A410E0B04613E3F3BD6F66E5A9ABBBAE6C0B60C09C0346D7F6CD9750305967"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/ArtifactService.cs",
+      "bytes": 19288,
+      "sha256": "BBE84B7621230AEEE53C4D3A80E64E4D536F0B654C3342F24B91A0FAED22C55C"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/Assets/policy.xml",
+      "bytes": 887,
+      "sha256": "40BDFA5543B7DBD49A35BF0D75734A0539E8B881A198BEEBD059BE7113590A3D"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/ChatStore.cs",
+      "bytes": 5858,
+      "sha256": "E19D3A711B368BDDCFBF4EDA88F59DC73555855310C344ABB8802CEE57BBC8E2"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/ContextPlanner.cs",
+      "bytes": 3617,
+      "sha256": "00D2440D2CA2D65BD07614542FF5A2C0B86D3C31EDF742B81796685E84BFD031"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/ConversationEngine.cs",
+      "bytes": 15056,
+      "sha256": "11537B0CD50771C70EA1D7389C5C9A08348939A1CBCCEFE65AEFF1C1DD158A81"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/CsvReader.cs",
+      "bytes": 1862,
+      "sha256": "0AA869E92220E949734542A99178E356C1BE9BAFC123E527840212CCB147D437"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/Diagnostics.cs",
+      "bytes": 3220,
+      "sha256": "CA6C3DC5E7E89F6B08C0C4469FE4566212023656C0975734B4F2B715D3BACF20"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/DocumentSpecs.cs",
+      "bytes": 8431,
+      "sha256": "040E78F69F143CC5C5778FDAAE4F19A5763F071D5CAC186D09AD99C5204422B6"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/ExtractionEngine.cs",
+      "bytes": 18666,
+      "sha256": "95B6CE19501F305988C3DE7D7ED354AE918A15C38064381E57E5B9B950B3C541"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/FileGuard.cs",
+      "bytes": 5630,
+      "sha256": "8A64E3E7767A50D6EF9B2A1993E5AE2CF9FFBB5725C7A3B54378B6A744754B9F"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/Models.cs",
+      "bytes": 6531,
+      "sha256": "EAB7081D83B93AF54D818C9FA7AEFEF06602B9D88F38AA0E59DE906CD5743BCE"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/OllamaClient.cs",
+      "bytes": 13109,
+      "sha256": "284063CE94446843B07090344500556D76BB59C06667AEB6BC7DA3C1F7583302"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/OllamaDesktop.Core.csproj",
+      "bytes": 919,
+      "sha256": "5F99939D5BF5275A59B11FA619640F59D045B3C1684DBA68F22F7092CC62599F"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/PdfiumRenderer.cs",
+      "bytes": 7711,
+      "sha256": "71EEDED862563962571C13858F35DFC4DFFBB61F30CA29FC5253A62AB97D01E9"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/SettingsStore.cs",
+      "bytes": 3056,
+      "sha256": "8269AEBE9678D65AC026273A79015187D2354AEF40110F8243C9374D1574673D"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/Templates/presentation-layout.xml",
+      "bytes": 567,
+      "sha256": "813AB50C3C2DC299D77225B1FC67F034C62E28B8A789DACAAE3F8F473AF57BD0"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/Templates/presentation-master.xml",
+      "bytes": 837,
+      "sha256": "17581017E54ECA846AD2BD4576FB1B2DF42EBACBBBCE569BDDBCAEDF2C816CF1"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/Templates/presentation-theme.xml",
+      "bytes": 2118,
+      "sha256": "2FF699D8DE7052C4846EEB47AFCAF62581C7104A8AE750B8FF2DC5B94EC8AD32"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/Templates/word-styles.xml",
+      "bytes": 1057,
+      "sha256": "32E22E34A32F43085C8881E69698EB8CE0799041010827389A3104DD4F3D3C8E"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/ToolCatalog.cs",
+      "bytes": 4156,
+      "sha256": "3E00B304F5F68475A13196C5FAB89733991DBF58DCA40EA03DACD0F9C1A968A8"
+    },
+    {
+      "path": "tests/OllamaDesktop.Tests/OllamaDesktop.Tests.csproj",
+      "bytes": 296,
+      "sha256": "3E5566F264CC54BB17813D38191F3E26A1D337AE2C4F4BDEB18999A7EB15D59C"
+    },
+    {
+      "path": "tests/OllamaDesktop.Tests/Program.cs",
+      "bytes": 18076,
+      "sha256": "868C4D574108A6891B2E1184B525683BE473C0D52C5F5C2CDF284C4F4FB88BD0"
+    },
+    {
+      "path": "MANIFEST.json",
+      "bytes": 13806,
+      "sha256": "2D81BA7E6A2285B762133839461AA82C6A6B22BEEFF23871024BE45383855D8B"
+    }
+  ]
+}

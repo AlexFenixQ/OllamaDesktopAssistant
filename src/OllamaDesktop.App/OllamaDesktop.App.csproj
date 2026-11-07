@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF>
+    <AssemblyName>OllamaDesktop</AssemblyName><RootNamespace>OllamaDesktop.App</RootNamespace>
+    <StartupObject>OllamaDesktop.App.Program</StartupObject><ApplicationManifest>app.manifest</ApplicationManifest>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier><PlatformTarget>x64</PlatformTarget>
+    <PublishTrimmed>false</PublishTrimmed><PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>true</SelfContained><DebugType>embedded</DebugType><ApplicationIcon>Assets\OllamaDesktop.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets\OllamaDesktop.ico" />
+    <EmbeddedResource Include="..\..\deployment\update-public-key.xml" LogicalName="OllamaDesktop.App.Update.public-key.xml" />
+    <EmbeddedResource Include="..\..\scripts\Apply-Update.ps1" LogicalName="OllamaDesktop.App.Update.Apply-Update.ps1" />
+    <ProjectReference Include="..\OllamaDesktop.Core\OllamaDesktop.Core.csproj" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="[8.4.2]" />
+    <PackageReference Include="Markdig" Version="[1.5.0]" />
+  </ItemGroup>
+</Project>

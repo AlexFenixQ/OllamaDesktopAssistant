@@ -1,0 +1,16 @@
+{
+  "version": "0.1.30",
+  "expectedTotalWindowsTests": 116,
+  "windowsCompile": "Passed on Windows 11 x64 build 26200, .NET SDK 10.0.403 / runtime 10.0.14.",
+  "windowsTests": "116/116 passed; includes signed update policy, channel selection, tampered signatures, project persistence, document generation and parsers.",
+  "wpfChecks": "17/17 passed in isolated temporary data root, including project rename/delete and draft+attachment restoration.",
+  "updateWorkerTests": "4/4 passed on isolated profiles with the actual Windows PowerShell 5.1 worker and a test installer; includes successful update, installer failure/rollback, tampered signature, unknown installed file.",
+  "visualChecks": "Actual WPF window inspected; project selection/rename and update dialog opened on synthetic data.",
+  "powershellTests": "52/52 passed on Windows PowerShell 5.1; package/version/BOM and full source 0.1.29 update/rollback passed.",
+  "liveCloudTested": false,
+  "cleanWindowsAcceptance": false,
+  "installerExecuted": true,
+  "windowsUserAcceptance": false,
+  "notes": "Clean Windows without development tools, Windows 10/ARM64, and a new live Ollama request were not tested in this release. Installer Authenticode publisher certificate is absent; update metadata has a pinned RSA signature. Original 298 data files and encrypted key matched their pre-task backup before upgrade.",
+  "actualUpgrade": "Real 0.1.29 -> 0.1.30 Inno /VERYSILENT update completed; installed inventory verified. All history rows/fields, encrypted key and attachment/generated file hashes preserved."
+}

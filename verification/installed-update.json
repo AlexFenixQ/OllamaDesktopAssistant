@@ -1,0 +1,10 @@
+{
+  "version": "0.1.30",
+  "success": true,
+  "actualInstallerExecuted": true,
+  "userHistoryRecordsAndFieldsUnchanged": true,
+  "keyUnchanged": true,
+  "allAttachmentAndGeneratedFileHashesUnchanged": true,
+  "dataBackupCreatedAndVerified": true,
+  "notes": "SQLite database file bytes changed during normal opening/checkpointing; all original rows and field values compare equal. Other 297 original files match pre-update SHA-256."
+}

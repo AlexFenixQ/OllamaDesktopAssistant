@@ -1,0 +1,26 @@
+[
+  {
+    "name": "installer-failure-restores-app",
+    "passed": true,
+    "workerExit": 1,
+    "code": "INSTALLER_EXIT_42"
+  },
+  {
+    "name": "successful-update-preserves-data",
+    "passed": true,
+    "workerExit": 0,
+    "code": ""
+  },
+  {
+    "name": "tampered-signature-rejected",
+    "passed": true,
+    "workerExit": 1,
+    "code": "UPDATE_SIGNATURE"
+  },
+  {
+    "name": "unknown-base-file-rejected",
+    "passed": true,
+    "workerExit": 1,
+    "code": "UNKNOWN_FILE: unknown.txt"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "kind": "Synthetic 1C-like, not native 1C data",
+  "xlsx_sales_rows": 1500,
+  "xlsx_stock_rows": 500,
+  "xlsx_products": 300,
+  "stress_csv_rows": 120000,
+  "xlsx_total_gross_vat_included": 388885507.54,
+  "xlsx_vat": 34320827.77,
+  "xlsx_sha256": "384377921B04A26A0B88979B2D5E037BFFC9CC0A9D62F9588C45E2B56810C3B4",
+  "csv_sha256": "48DBB9F5D36C780BAA474F3EEB208FB7E339E81F2777C043590E6E8CFA286614"
+}
