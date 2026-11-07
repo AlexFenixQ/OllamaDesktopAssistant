@@ -34,6 +34,7 @@ function Get-BaselineFile([string]$FromVersion) {
 function Get-SourceBaselineFile([string]$FromVersion, [string]$Directory) {
     $name = Get-BaselineFile $FromVersion
     $choices = @($name)
+    if ($FromVersion -eq '0.1.30') { $choices += 'UPDATE_BASE_0130_REPOSITORY.json' }
     if ($FromVersion -eq '0.1.28') { $choices += 'UPDATE_BASE_0128_HOTFIX1.json' }
     $manifestPath = Get-ManagedPath $Directory 'MANIFEST.json'
     $actual = (Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash

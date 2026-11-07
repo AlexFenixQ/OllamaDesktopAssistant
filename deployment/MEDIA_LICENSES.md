@@ -1,0 +1,9 @@
+# Native audio/video components
+
+FFmpeg 9.0.2 is used under LGPL 2.1 or later. The exact complete upstream source archive, configuration flags and build script are distributed alongside the binaries. This build disables GPL, version3 and nonfree components and all network protocols. No external codec library is linked. Sources include COPYING.LGPLv2.1 and complete upstream licensing files. FFmpeg is a separate subprocess; the application is not linked to FFmpeg libraries. Users may replace the executables with compatible modified builds; the updater rejects modified installation files to prevent silently overwriting them. Keep modified builds outside the managed installation or use a custom source build and release inventory.
+
+Whisper.net 1.9.1 and whisper.cpp f24588a272ae8e23280d9c220536437164e6ed28 use MIT licenses included in their complete source archives. whisper.cpp builds are shared, with static GCC/MinGW runtimes under their respective runtime exceptions. MinGW-w64 runtime copyright/license is included separately. Build-Native.ps1 applies only the documented target-name patch to the extracted wrapper CMakeLists.txt; archived sources are unmodified.
+
+The separately downloaded multilingual Whisper small/medium ggml models originate from OpenAI Whisper (MIT). Exact immutable model URLs and SHA-256 values are pinned in MediaModels.cs. Model weights are not part of this installer. The included MIT license records the upstream OpenAI copyright; the model-download host is Hugging Face ggerganov/whisper.cpp.
+
+Build compiler: w64devkit 2.11.0 (development only; not shipped to end users). No Visual C++ Redistributable is required by these native builds. AV1 and some uncommon codecs are not available; unsupported/corrupted files fail explicitly with originals preserved.

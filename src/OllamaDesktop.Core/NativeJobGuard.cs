@@ -3,16 +3,16 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace OllamaDesktop.App.Infrastructure;
+namespace OllamaDesktop.Core;
 
-internal sealed class JobGuard : IDisposable
+public sealed class NativeJobGuard : IDisposable
 {
     private readonly SafeJobHandle _handle;
-    public JobGuard(Process process)
+    public NativeJobGuard(Process process, ulong memoryMiB = 1024)
     {
         _handle = CreateJobObject(IntPtr.Zero, null);
         if (_handle.IsInvalid) throw new Win32Exception(Marshal.GetLastWin32Error());
-        var limits = new ExtendedLimits { Basic = new BasicLimits { Flags = 0x2000 | 0x0100 }, ProcessMemory = (UIntPtr)(1024UL * 1024 * 1024) };
+        var limits = new ExtendedLimits { Basic = new BasicLimits { Flags = 0x2000 | 0x0100 }, ProcessMemory = (UIntPtr)(memoryMiB * 1024 * 1024) };
         if (!SetInformationJobObject(_handle, 9, ref limits, (uint)Marshal.SizeOf<ExtendedLimits>()) || !AssignProcessToJobObject(_handle, process.Handle))
         { var error = Marshal.GetLastWin32Error(); _handle.Dispose(); throw new Win32Exception(error); }
     }

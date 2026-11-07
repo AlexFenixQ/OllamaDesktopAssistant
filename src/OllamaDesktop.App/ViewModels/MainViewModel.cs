@@ -49,7 +49,7 @@ public sealed class MainViewModel : ObservableObject
     public async Task NavigateChatAsync(Conversation chat) {
         if (Busy) return;
         _project = Projects.FirstOrDefault(p => p.Id == (chat.ProjectId ?? ""));
-        OnPropertyChanged(nameof(ActiveProject)); OnPropertyChanged(nameof(ProjectLabel)); OnPropertyChanged(nameof(HasActiveProject));
+        OnPropertyChanged(nameof(ActiveProject)); OnPropertyChanged(nameof(ProjectLabel)); OnPropertyChanged(nameof(ChatProjectLabel)); OnPropertyChanged(nameof(HasActiveProject));
         ReplaceList(_allChats); await SelectAsync(chat);
     }
     public async Task RenameProjectAsync(WorkspaceProject project) {
@@ -89,12 +89,14 @@ public sealed class MainViewModel : ObservableObject
     public WorkspaceProject? ActiveProject
     {
         get => _project;
-        set { if (Busy) return; if (SetProperty(ref _project, value)) { OnPropertyChanged(nameof(ProjectLabel)); OnPropertyChanged(nameof(HasActiveProject)); UpdateCommands(); _ = ReloadProjectsAsync(); } }
+        set { if (Busy) return; if (SetProperty(ref _project, value)) { OnPropertyChanged(nameof(ProjectLabel)); OnPropertyChanged(nameof(ChatProjectLabel)); OnPropertyChanged(nameof(HasActiveProject)); UpdateCommands(); _ = ReloadProjectsAsync(); } }
     }
+    public string ChatProjectLabel => Projects.FirstOrDefault(p=>p.Id==_current?.ProjectId && p.Id.Length>0)?.Name ?? "Без проекта";
     public string ProjectLabel => _project is null || _project.Id.Length == 0 ? "Все чаты" : _project.Name;
     public ObservableCollection<MessageViewModel> Messages { get; } = [];
     public ObservableCollection<Attachment> Attachments { get; } = [];
-    public string AttachmentCounter => $"Вложенные файлы ({Attachments.Count})";
+    public IEnumerable<Attachment> ConversationFiles => Attachments.Concat(Messages.SelectMany(m=>m.Record.Attachments)).DistinctBy(a=>a.Id);
+    public string AttachmentCounter => $"Файлы чата ({ConversationFiles.Count()})";
     public string AppVersion => BuildInfo.Version;
     public event Action? ScrollRequested;
     public string Title => _current?.Title ?? "Ollama Desktop";
@@ -132,7 +134,8 @@ public sealed class MainViewModel : ObservableObject
     public MainViewModel(Services services, IUserDialogs dialogs, AppSettings settings)
     {
         _services = services; _dialogs = dialogs; _settings = settings;
-        Attachments.CollectionChanged += (_, _) => OnPropertyChanged(nameof(AttachmentCounter));
+        Attachments.CollectionChanged += (_, _) => { OnPropertyChanged(nameof(AttachmentCounter)); OnPropertyChanged(nameof(ConversationFiles)); };
+        Messages.CollectionChanged += (_,_) => { OnPropertyChanged(nameof(AttachmentCounter)); OnPropertyChanged(nameof(ConversationFiles)); };
         SendCommand = new AsyncRelayCommand(() => SendAsync(), () => !Busy && _current is not null && !string.IsNullOrWhiteSpace(Draft));
         StopCommand = new RelayCommand(Cancel, () => Busy);
         NewCommand = new AsyncRelayCommand(NewAsync, () => !Busy);
@@ -147,7 +150,7 @@ public sealed class MainViewModel : ObservableObject
         MoveToProjectCommand = new AsyncRelayCommand(MoveToProjectAsync, () => !Busy && _current is not null);
         SettingsCommand = new RelayCommand(OpenSettings, () => !Busy);
         ClearErrorCommand = new RelayCommand(() => Error = "");
-        RemoveAttachmentCommand = new RelayCommand<Attachment>(a => { if (a is not null) Attachments.Remove(a); }, _ => !Busy);
+        RemoveAttachmentCommand = new RelayCommand<Attachment>(a => { if (a is not null) Attachments.Remove(a); }, a => !Busy && a is not null && Attachments.Contains(a));
         _streamTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) }; _streamTimer.Tick += (_, _) => Flush(); _streamTimer.Start();
     }
     private void UpdateCommands()
@@ -194,7 +197,7 @@ public sealed class MainViewModel : ObservableObject
     private async Task LoadAsync(Conversation chat)
     {
         var records = await Task.Run(() => _services.Store.LoadMessages(chat.Id));
-        _current = chat; OnPropertyChanged(nameof(Title)); Messages.Clear(); Attachments.Clear();
+        _current = chat; OnPropertyChanged(nameof(Title)); OnPropertyChanged(nameof(ChatProjectLabel)); Messages.Clear(); Attachments.Clear();
         foreach (var record in records) Messages.Add(new MessageViewModel(record));
         UpdateLastAssistant();
         Draft = ""; Error = "";
@@ -249,15 +252,24 @@ public sealed class MainViewModel : ObservableObject
                 }
                 else
                 {
-                    var attachment = await _services.Import.ImportAsync(_current.Id, file, _operation.Token);
+                    var attachment = await _services.Import.ImportAsync(_current.Id, file, _operation.Token, progress: new Progress<string>(stage=>Status=stage));
                     Attachments.Add(attachment);
+                    await PersistDraftAsync();
+                    _operation.Token.ThrowIfCancellationRequested();
                 }
             }
-            Status = "Подготовлено вложений: " + Attachments.Count + (Attachments.Any(ArchiveReplay.IsArchive) ? ". ZIP будет распакован после отправки." : ". Можно отправлять запрос.");
+            Status = Attachments.Any(a=>a.CanResume)?"Есть незавершённая запись. Расшифровка сохранена; нажмите «Продолжить» в панели файлов.":"Подготовлено вложений: " + Attachments.Count + (Attachments.Any(ArchiveReplay.IsArchive) ? ". ZIP будет распакован после отправки." : ". Можно отправлять запрос.");
         }
         catch (OperationCanceledException) { Status = "Чтение остановлено."; }
         catch (Exception e) { Fail(e); Status = "Не все вложения подготовлены."; }
         finally { _operation.Dispose(); _operation = null; Busy = false; }
+    }
+    public async Task ResumeMediaAsync(Attachment attachment) {
+        if(Busy || _current is null || !Attachments.Contains(attachment))return;
+        Busy=true;Error="";_operation=new CancellationTokenSource();
+        try { var updated=await _services.Import.ResumeAsync(_current.Id,attachment,new Progress<string>(stage=>Status=stage),_operation.Token);var index=Attachments.IndexOf(attachment);if(index>=0)Attachments[index]=updated;await PersistDraftAsync();Status=updated.CanResume?"Сохранена частичная расшифровка. Можно продолжить.":"Медиазапись подготовлена полностью."; }
+        catch(OperationCanceledException){Status="Подготовка остановлена; контрольная точка сохранена.";}
+        catch(Exception error){Fail(error);}finally{_operation.Dispose();_operation=null;Busy=false;}
     }
     public async Task PasteAsync()
     {
@@ -283,7 +295,7 @@ public sealed class MainViewModel : ObservableObject
         if (displayAttachments.Any(ArchiveReplay.IsArchive))
         {
             Busy = true;
-            _operation = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+            _operation = new CancellationTokenSource(TimeSpan.FromHours(24));
             Status = "Проверка архивов после отправки…";
             try
             {
@@ -299,7 +311,7 @@ public sealed class MainViewModel : ObservableObject
                         var expanded = await ArchiveImport.ExpandDetailedAsync(zipPath, staging, Limits.AttachmentCount - attachments.Count - reserved, _operation.Token);
                         var firstImported = attachments.Count;
                         foreach (var extracted in expanded.Files)
-                            attachments.Add(await _services.Import.ImportAsync(_current.Id, extracted.Path, _operation.Token, extracted.DisplayName));
+                            attachments.Add(await _services.Import.ImportAsync(_current.Id, extracted.Path, _operation.Token, extracted.DisplayName, new Progress<string>(stage=>Status=stage)));
                         Diagnostics.Record(_services.Paths, expanded.Skipped.Count > 0 ? "ZIP_EXPANDED_PARTIAL" : "ZIP_EXPANDED_OK");
                         if (expanded.Skipped.Count > 0)
                             attachments[firstImported].Warnings.Add("ZIP: не обработаны неподдерживаемые файлы: " + string.Join(", ", expanded.Skipped));
@@ -316,17 +328,18 @@ public sealed class MainViewModel : ObservableObject
         if (prompt.Length > Limits.UserCharacters) { Error = "Запрос превышает 16 000 знаков."; return; }
         var textSize = attachments.Sum(a => (long)a.Segments.Sum(s => s.Text.Length));
         var visualCount = AnalyzeVisuals ? attachments.Sum(a => a.Visuals.Count) : 0;
-        if (textSize > Limits.TotalCharacters || visualCount > Limits.VisualsPerRequest) { Error = "Для одного запроса выберите не более 600 000 знаков текста и 50 подготовленных изображений. Уберите часть вложений или отключите визуальный анализ."; return; }
+        if (!attachments.Any(a=>a.Media is not null) && (textSize > Limits.TotalCharacters || visualCount > Limits.VisualsPerRequest)) { Error = "Для одного запроса выберите не более 600 000 знаков текста и 50 подготовленных изображений. Уберите часть вложений или отключите визуальный анализ."; return; }
         if (attachments.Count > 0)
         {
             var explanation = $"Будут переданы в Ollama Cloud: запрос, ограниченная история этого чата, текст выбранных вложений ({textSize:N0} знаков) и {visualCount} подготовленных изображений.\n\n";
-            if (textSize > Limits.ContextCharacters && FullDocument) explanation += "Для полного текста понадобятся промежуточные облачные запросы. Защитный предел — 64 запроса за операцию; они расходуют лимиты/баланс аккаунта.\n\n";
-            if (!FullDocument && textSize > Limits.ContextCharacters) explanation += "Будет передана только часть текста, отобранная по запросу.\n\n";
+            if (textSize > Limits.ContextCharacters && FullDocument && !attachments.Any(a=>a.Media is not null)) explanation += "Для полного текста понадобятся промежуточные облачные запросы. Защитный предел — 64 запроса за операцию; они расходуют лимиты/баланс аккаунта.\n\n";
+            if (!FullDocument && textSize > Limits.ContextCharacters && !attachments.Any(a=>a.Media is not null)) explanation += "Будет передана только часть текста, отобранная по запросу.\n\n";
             if (!AnalyzeVisuals && attachments.Any(a => a.Visuals.Count > 0)) explanation += "Визуальный анализ отключён. Содержимое изображений и сканов не распознается.\n\n";
             explanation += string.Join("\n", attachments.SelectMany(a => a.Warnings.Select(w => a.Name + ": " + w)));
             if (!_dialogs.Confirm("Отправить выбранные данные в облако?", explanation)) return;
         }
-        Busy = true; Error = ""; _checkpoint = Task.CompletedTask; _operation = new CancellationTokenSource(TimeSpan.FromMinutes(25));
+        if(attachments.Any(a=>a.CanResume)) { Error="Подготовка записи не завершена. Нажмите «Продолжить» в панели файлов; частичная расшифровка сохранена."; return; }
+        Busy = true; Error = ""; _checkpoint = Task.CompletedTask; _operation = new CancellationTokenSource(attachments.Any(a=>a.Media is not null) ? TimeSpan.FromHours(6) : TimeSpan.FromMinutes(25));
         var history = regenerate ? replay!.History : Messages.Select(m => m.Record).ToList(); var settings = JsonDefaults.Read<AppSettings>(JsonDefaults.Write(_settings));
         MessageViewModel? answer = null;
         try
@@ -417,7 +430,7 @@ public sealed class MainViewModel : ObservableObject
         Projects.Clear(); Projects.Add(new WorkspaceProject { Id = "", Name = "Все чаты" });
         foreach (var project in projects) Projects.Add(project);
         _project = Projects.FirstOrDefault(p => p.Id == previousId) ?? Projects[0];
-        OnPropertyChanged(nameof(ActiveProject)); OnPropertyChanged(nameof(ProjectLabel)); OnPropertyChanged(nameof(HasActiveProject)); OnPropertyChanged(nameof(SidebarProjects));
+        OnPropertyChanged(nameof(ActiveProject)); OnPropertyChanged(nameof(ProjectLabel)); OnPropertyChanged(nameof(ChatProjectLabel)); OnPropertyChanged(nameof(HasActiveProject)); OnPropertyChanged(nameof(SidebarProjects));
     }
     private async Task ReloadProjectsAsync()
     {
@@ -455,7 +468,7 @@ public sealed class MainViewModel : ObservableObject
             await Task.Run(() => _services.Store.SaveProject(project));
             RefreshProjects(await Task.Run(_services.Store.Projects));
             _project = Projects.First(p => p.Id == project.Id);
-            OnPropertyChanged(nameof(ActiveProject)); OnPropertyChanged(nameof(ProjectLabel)); OnPropertyChanged(nameof(HasActiveProject));
+            OnPropertyChanged(nameof(ActiveProject)); OnPropertyChanged(nameof(ProjectLabel)); OnPropertyChanged(nameof(ChatProjectLabel)); OnPropertyChanged(nameof(HasActiveProject));
             Status = "Проект создан. Новые чаты будут сохраняться в нём.";
         }
         catch (Exception e) { Fail(e); }
@@ -540,6 +553,7 @@ public sealed class MainViewModel : ObservableObject
     }
     public void Cancel() => _operation?.Cancel();
     public void Shutdown() { Cancel(); _search?.Cancel(); _streamTimer.Stop(); }
+    public void Notify(string message) { Error=""; Status=message; }
     public void Fail(Exception exception)
     {
         Error = FriendlyError.Describe(exception);

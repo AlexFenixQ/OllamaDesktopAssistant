@@ -8,7 +8,7 @@ using OllamaDesktop.Core;
 namespace OllamaDesktop.Tests;
 internal static class Program
 {
-    private static UpdateManifest ValidUpdate() => new() { ProductId="OllamaDesktopAssistant",Version="0.2.0",Channel="stable",MinimumVersion="0.1.30",InstallerUrl=UpdateFeed.DownloadPrefix+"v0.2.0/Setup.exe",InstallerSha256=new string('A',64),InstallerBytes=500000,InventoryUrl=UpdateFeed.DownloadPrefix+"v0.2.0/installed-files.json",InventorySha256=new string('B',64),Notes="Test" };
+    private static UpdateManifest ValidUpdate() => new() { ProductId="OllamaDesktopAssistant",Version="0.2.0",Channel="stable",MinimumVersion="0.1.31",InstallerUrl=UpdateFeed.DownloadPrefix+"v0.2.0/Setup.exe",InstallerSha256=new string('A',64),InstallerBytes=500000,InventoryUrl=UpdateFeed.DownloadPrefix+"v0.2.0/installed-files.json",InventorySha256=new string('B',64),Notes="Test" };
     private static readonly List<object> Results = [];
     private static int _failures;
     private static readonly string Root = Path.Combine(Path.GetTempPath(), "OllamaDesktop-Tests-" + Guid.NewGuid().ToString("N"));
@@ -32,17 +32,17 @@ internal static class Program
             var data=Encoding.UTF8.GetBytes(JsonDefaults.Write(ValidUpdate())); var sig=a.SignData(data,System.Security.Cryptography.HashAlgorithmName.SHA256,System.Security.Cryptography.RSASignaturePadding.Pkcs1);
             bool rejected=false;try{UpdateFeed.Verify(data,sig,b.ToXmlString(false));}catch(AppException){rejected=true;}True(rejected);
         });
-        await Test("update-stable-policy", () => UpdateFeed.Validate(ValidUpdate(),"0.1.30","stable"));
-        await Test("update-beta-includes-stable", () => UpdateFeed.Validate(ValidUpdate(),"0.1.30","beta"));
-        await Test("update-stable-rejects-beta", () => { var m=ValidUpdate();m.Channel="beta";m.Version="0.2.0-beta.1"; bool rejected=false;try{UpdateFeed.Validate(m,"0.1.30","stable");}catch(AppException){rejected=true;}True(rejected); });
+        await Test("update-stable-policy", () => UpdateFeed.Validate(ValidUpdate(),"0.1.31","stable"));
+        await Test("update-beta-includes-stable", () => UpdateFeed.Validate(ValidUpdate(),"0.1.31","beta"));
+        await Test("update-stable-rejects-beta", () => { var m=ValidUpdate();m.Channel="beta";m.Version="0.2.0-beta.1"; bool rejected=false;try{UpdateFeed.Validate(m,"0.1.31","stable");}catch(AppException){rejected=true;}True(rejected); });
         await Test("update-reject-downgrade-or-same", () => {foreach(var current in new[]{"0.2.0","0.3.0"}){bool rejected=false;try{UpdateFeed.Validate(ValidUpdate(),current,"stable");}catch(AppException){rejected=true;}True(rejected);}});
-        await Test("update-reject-unsupported-base", () => {var m=ValidUpdate();m.MinimumVersion="0.1.31";bool rejected=false;try{UpdateFeed.Validate(m,"0.1.30","stable");}catch(AppException){rejected=true;}True(rejected);});
+        await Test("update-reject-unsupported-base", () => {var m=ValidUpdate();m.MinimumVersion="0.2.0";bool rejected=false;try{UpdateFeed.Validate(m,"0.1.31","stable");}catch(AppException){rejected=true;}True(rejected);});
         await Test("update-reject-untrusted-downloads", () => {foreach(var url in new[]{"http://github.com/AlexFenixQ/OllamaDesktopAssistant/releases/download/v0.2.0/Setup.exe","https://evil.example/Setup.exe","https://github.com/other/repo/releases/download/v0.2.0/Setup.exe",UpdateFeed.DownloadPrefix+"v0.2.0/../Setup.exe",UpdateFeed.DownloadPrefix+"v0.2.0/Setup.exe?token=x"}){bool rejected=false;try{UpdateFeed.ValidateUrl(url,"0.2.0");}catch(AppException){rejected=true;}True(rejected);}});
-        await Test("update-reject-hash-and-size", () => {foreach(var m in new[]{ValidUpdate(),ValidUpdate()}){if(m.InstallerSha256.Length==64)m.InstallerSha256="invalid";bool rejected=false;try{UpdateFeed.Validate(m,"0.1.30","stable");}catch(AppException){rejected=true;}True(rejected);}var tooLarge=ValidUpdate();tooLarge.InstallerBytes=300_000_001;bool failed=false;try{UpdateFeed.Validate(tooLarge,"0.1.30","stable");}catch(AppException){failed=true;}True(failed);});
+        await Test("update-reject-hash-and-size", () => {foreach(var m in new[]{ValidUpdate(),ValidUpdate()}){if(m.InstallerSha256.Length==64)m.InstallerSha256="invalid";bool rejected=false;try{UpdateFeed.Validate(m,"0.1.31","stable");}catch(AppException){rejected=true;}True(rejected);}var tooLarge=ValidUpdate();tooLarge.InstallerBytes=300_000_001;bool failed=false;try{UpdateFeed.Validate(tooLarge,"0.1.31","stable");}catch(AppException){failed=true;}True(failed);});
         await Test("update-feed-channel-and-draft-selection", () => {
             object Release(string tag,bool beta,bool draft=false)=>new{tag_name=tag,prerelease=beta,draft,assets=new[]{new{name="update.json",browser_download_url=UpdateFeed.DownloadPrefix+tag+"/update.json"}}};
             var json=JsonSerializer.Serialize(new[]{Release("v0.2.0",false),Release("v0.3.0-beta.1",true),Release("v0.4.0",false,true)});
-            Equal("v0.2.0",UpdateFeed.Candidates(json,"0.1.30","stable").First().Tag);Equal("v0.3.0-beta.1",UpdateFeed.Candidates(json,"0.1.30","beta").First().Tag);
+            Equal("v0.2.0",UpdateFeed.Candidates(json,"0.1.31","stable").First().Tag);Equal("v0.3.0-beta.1",UpdateFeed.Candidates(json,"0.1.31","beta").First().Tag);
         });
         await Test("update-options-backward-compatible", () => {var settings=JsonDefaults.Read<AppSettings>("{\"textModel\":\"gpt-oss:120b\",\"theme\":\"Light\"}");SettingsStore.Validate(settings);Equal("stable",settings.UpdateChannel);True(settings.AutomaticUpdateChecks);Equal("Light",settings.Theme);});
         await Test("project-rename-retains-chat-context", () => {var store=new ChatStore(Paths);store.Initialize();var p=new WorkspaceProject{Name="Before",Instructions="instruction",MemoryNotes="memory"};store.SaveProject(p);var c=new Conversation{ProjectId=p.Id};store.SaveConversation(c);p.Name="After";store.SaveProject(p);Equal("After",store.GetProject(p.Id)!.Name);Equal("memory",store.GetProject(p.Id)!.MemoryNotes);Equal(p.Id,store.List().First(x=>x.Id==c.Id).ProjectId);});
@@ -469,6 +469,30 @@ internal static class Program
             var result=await new ConversationEngine(Paths,client).GenerateAsync(Chat,Id(),"Compare the images",[],[new Attachment {Visuals=visuals}],new AppSettings {CloudConsent=true},OutputKind.Chat,"FAKE_TEST_KEY",new Progress<WorkProgress>(_=>{}),CancellationToken.None);
             Equal("combined answer",result.Content); Equal(2,batches);
         });
+
+        await Test("media-six-hour-timeline-no-gaps",()=>{var chunks=MediaTime.Chunks(21600).ToArray();Equal(72,chunks.Length);Equal(21600d,chunks.Sum(x=>x.Duration));for(var i=1;i<chunks.Length;i++)Equal(chunks[i-1].Start+chunks[i-1].Duration,chunks[i].Start);});
+        await Test("media-duration-invalid-rejected",()=>{foreach(var n in new[]{0d,-1,21600.001,double.NaN,double.PositiveInfinity})Reject(()=>MediaTime.Chunks(n).ToList());});
+        await Test("media-last-part-not-dropped",()=>{var c=MediaTime.Chunks(601.25).ToArray();Equal(3,c.Length);Equal(1.25,c[^1].Duration);Equal(600d,c[^1].Start);});
+        await Test("media-frames-span-whole-recording",()=>{var f=MediaTime.UniformFrames(21600);Equal(24,f.Count);True(f.First()<500);True(f.Last()>21000);True(f.All(t=>t>=0&&t<21600));});
+        await Test("media-playlist-and-executable-masquerades-rejected",()=>{foreach(var text in new[]{"#EXTM3U\nhttps://example.com/a.mp3","MZ fake executable","<html>remote source</html>"}){var f=Paths.Resolve("Staging/"+Id()+".mp4");File.WriteAllText(f,text);Reject(()=>MediaTools.CheckHeader(f));}});
+        await Test("media-limits-independent",()=>{Equal(512L*1024*1024,Limits.FileBytes);Equal(2L*1024*1024*1024,Limits.MediaBytes);True(FileGuard.IsMedia("Conference.MP4"));True(FileGuard.IsMedia("audio.FLAC"));True(!FileGuard.IsMedia("fake.mp4.exe"));});
+        await Test("media-old-settings-and-attachments-compatible",()=>{var settings=JsonDefaults.Read<AppSettings>("{}");SettingsStore.Validate(settings);Equal("small",settings.SpeechModel);var a=JsonDefaults.Read<Attachment>("{\"name\":\"old.txt\"}");True(a.Media is null);True(!a.CanResume);});
+        await Test("media-report-word-is-real-validated-document",()=>{var a=MediaArtifacts.Report(Paths,Chat,"# Итоги\nБюджет: 125000 рублей.\nОтветственный: не указан.","Проверка покрытия",CancellationToken.None);True(File.Exists(Paths.Resolve(a.RelativePath)));Equal(a.Sha256,AppPaths.Hash(Paths.Resolve(a.RelativePath)));using var d=WordprocessingDocument.Open(Paths.Resolve(a.RelativePath),false);True(d.MainDocumentPart!.Document!.InnerText.Contains("125000"));});
+        await TestAsync("media-incomplete-report-rejected-before-cloud",async()=>{using var client=Fake(HttpStatusCode.OK,"{}");await RejectCodeAsync("MEDIA_INCOMPLETE",()=>new MediaReportEngine(Paths,client).GenerateAsync(Chat,"Report",[new Attachment{Media=new MediaMetadata{DurationSeconds=600}}],new AppSettings{CloudConsent=true},"FAKE_TEST_KEY",new Progress<WorkProgress>(),CancellationToken.None));});
+        await TestAsync("media-report-covers-first-and-last-blocks",async()=>{
+            var seenFirst=false;var seenLast=false;var summaries=0;var finals=0;
+            using var client=new OllamaClient(new Stub(async(request,token)=>{
+                var raw=await request.Content!.ReadAsStringAsync(token);using var doc=JsonDocument.Parse(raw);var system=doc.RootElement.GetProperty("messages")[0].GetProperty("content").GetString()!;
+                string answer;
+                if(system.Contains("Cover EVERY")){seenFirst|=raw.Contains("FIRST_EVIDENCE");seenLast|=raw.Contains("LAST_EVIDENCE");answer="SUMMARY_"+(++summaries);}
+                else{finals++;True(raw.Contains("SUMMARY_1"));True(raw.Contains("SUMMARY_"+summaries));answer="# Итоги\nПолная сводка теста.";}
+                return new HttpResponseMessage(HttpStatusCode.OK){Content=new StringContent(JsonDefaults.Write(new{message=new{content=answer},done=true})+"\n")};
+            }));
+            var a=new Attachment{Name="synthetic.wav",Media=new MediaMetadata{DurationSeconds=600,AudioComplete=true,FramesComplete=true},Segments=[new SourceSegment("00:00:00","FIRST_EVIDENCE "+new string('x',19000)),new SourceSegment("00:09:59",new string('y',19000)+" LAST_EVIDENCE")]};
+            var result=await new MediaReportEngine(Paths,client).GenerateAsync(Chat,"Report",[a],new AppSettings{CloudConsent=true},"FAKE_TEST_KEY",new Progress<WorkProgress>(),CancellationToken.None);
+            True(seenFirst&&seenLast);True(summaries>=3);Equal(1,finals);Equal(1,result.Artifacts.Count);
+        });
+
         var report = args.Length == 2 && args[0] == "--report" ? args[1] : Path.Combine(Environment.CurrentDirectory, "tests.json");
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(report))!);
         File.WriteAllText(report, JsonDefaults.Write(new { version = BuildInfo.Version, utc = DateTimeOffset.UtcNow, platform = "Windows x64", count = Results.Count, failed = _failures, cloudRequests = 0, tests = Results }));

@@ -20,6 +20,7 @@ public sealed class SettingsStore(AppPaths paths)
         foreach (var id in new[] { settings.TextModel, settings.VisionModel })
             if (string.IsNullOrWhiteSpace(id) || id.Length > 120 || id.Any(c => char.IsWhiteSpace(c) || char.IsControl(c)))
                 throw new AppException("MODEL_ID", "Укажите корректные идентификаторы облачных моделей.");
+        if (settings.SpeechModel is not ("small" or "medium")) settings.SpeechModel = "small";
         if (settings.UpdateChannel is not ("stable" or "beta")) settings.UpdateChannel = "stable";
         if (settings.Theme is not ("Dark" or "Light")) settings.Theme = "Dark";
     }

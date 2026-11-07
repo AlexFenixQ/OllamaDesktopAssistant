@@ -7,17 +7,19 @@ namespace OllamaDesktop.Core;
 
 public static class FileGuard
 {
-    public static readonly string[] Extensions = [".docx", ".xlsx", ".pptx", ".pdf", ".txt", ".csv", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".zip"];
+    public static readonly string[] MediaExtensions = [".wav", ".mp3", ".m4a", ".aac", ".flac", ".ogg", ".opus", ".mp4", ".mov", ".mkv", ".webm", ".avi", ".wmv", ".wma", ".mpg", ".mpeg", ".ts"];
+    public static bool IsMedia(string file) => MediaExtensions.Contains(Path.GetExtension(file).ToLowerInvariant());
+    public static readonly string[] Extensions = [..MediaExtensions,".docx", ".xlsx", ".pptx", ".pdf", ".txt", ".csv", ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".zip"];
     public static string Extension(string path)
     {
         var extension = Path.GetExtension(path).ToLowerInvariant();
-        if (!Extensions.Contains(extension)) throw new AppException("FORMAT_UNSUPPORTED", "Этот формат пока не поддерживается. Доступны DOCX, XLSX, PPTX, PDF, TXT, CSV, JPEG, PNG, WebP, BMP TIFF и ZIP. Старые DOC/XLS/PPT и файлы с макросами не открываются.");
+        if (!Extensions.Contains(extension)) throw new AppException("FORMAT_UNSUPPORTED", "Этот формат пока не поддерживается. Доступны DOCX, XLSX, PPTX, PDF, TXT, CSV, JPEG, PNG, WebP, BMP TIFF, ZIP, аудио и видео. Старые DOC/XLS/PPT и файлы с макросами не открываются.");
         return extension;
     }
     public static void CheckSize(string file)
     {
         var info = new FileInfo(file);
-        if (!info.Exists || info.Length == 0 || info.Length > Limits.FileBytes) throw new AppException("FILE_SIZE", "Файл должен быть непустым и не больше 25 МиБ.");
+        if (!info.Exists || info.Length == 0 || info.Length > (IsMedia(file) ? Limits.MediaBytes : Limits.FileBytes)) throw new AppException("FILE_SIZE", IsMedia(file) ? "Медиазапись должна быть непустой и не больше 2 ГиБ." : "Файл должен быть непустым и не больше 512 МиБ.");
     }
     public static List<string> CheckOffice(string file, string extension)
     {

@@ -1,7 +1,7 @@
 {
   "productId": "OllamaDesktopAssistant",
   "fromVersion": "0.1.23",
-  "toVersion": "0.1.30",
+  "toVersion": "0.1.31",
   "algorithm": "SHA-256",
   "files": [
     {

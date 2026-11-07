@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/MediaTools/ffmpeg.exe",
+      "bytes": 10997248,
+      "sha256": "B29AB72E5750C7FEBC17775A71D8569AE620B7805A6F030B6D86F2DD6AB073EB"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/MediaTools/ffprobe.exe",
+      "bytes": 10780672,
+      "sha256": "449CADC1CD89AC3A97A4EA0841C47DF73E3771AB0C93FDEA9909A287E1DC7D93"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/runtimes/noavx/win-x64/ggml-base-whisper.dll",
+      "bytes": 1382006,
+      "sha256": "F618B1D33AAE63BC6D015116F507D5698FDC3FB71DC805E58A5EEA06D38CE4FB"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/runtimes/noavx/win-x64/ggml-cpu-whisper.dll",
+      "bytes": 1418982,
+      "sha256": "A2CD109A7D249C7105B46A419CBA1D6F5FF5F1A8B6D6209040E4CBDE2E8B6EC9"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/runtimes/noavx/win-x64/ggml-whisper.dll",
+      "bytes": 2817054,
+      "sha256": "E7BA00CFC69A2161F683BE6E8A685C85DC6C9FFCAA89CB06A723211D55170CC7"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/runtimes/noavx/win-x64/whisper.dll",
+      "bytes": 3147472,
+      "sha256": "1D41AF880155AFD0FE007BF7D277B64CEA3BBAAA025F34AC7234302F4F68629F"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/runtimes/win-x64/ggml-base-whisper.dll",
+      "bytes": 1382006,
+      "sha256": "F618B1D33AAE63BC6D015116F507D5698FDC3FB71DC805E58A5EEA06D38CE4FB"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/runtimes/win-x64/ggml-cpu-whisper.dll",
+      "bytes": 1539119,
+      "sha256": "AD8E02D62B37F1D1C1C4DD3B2C529020D6EEC54C455199C1733860DDFB25DB9B"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/runtimes/win-x64/ggml-whisper.dll",
+      "bytes": 2817054,
+      "sha256": "E7BA00CFC69A2161F683BE6E8A685C85DC6C9FFCAA89CB06A723211D55170CC7"
+    },
+    {
+      "path": "src/OllamaDesktop.Core/NativePayload/runtimes/win-x64/whisper.dll",
+      "bytes": 3147472,
+      "sha256": "1D41AF880155AFD0FE007BF7D277B64CEA3BBAAA025F34AC7234302F4F68629F"
+    }
+  ]
+}

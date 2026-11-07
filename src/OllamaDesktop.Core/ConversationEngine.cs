@@ -31,6 +31,7 @@ public sealed class ConversationEngine(AppPaths paths, OllamaClient client)
         if (!settings.CloudConsent) throw new AppException("CLOUD_CONSENT", "Разрешите отправку выбранных данных в облако в настройках.");
         if (string.IsNullOrWhiteSpace(prompt) || prompt.Length > Limits.UserCharacters) throw new AppException("PROMPT_SIZE", "Введите запрос длиной до 16 000 знаков.");
         if (attachments.Count > Limits.AttachmentCount) throw new AppException("ATTACHMENT_COUNT", "Допускается до 50 вложений за запрос.");
+        if (attachments.Any(a => a.Media is not null)) return await new MediaReportEngine(paths, client).GenerateAsync(chatId, prompt, attachments, settings, key, progress, token, projectContext).ConfigureAwait(false);
         var sources = attachments.SelectMany(a => a.Segments).ToList();
         if (sources.Sum(s => (long)s.Text.Length) > Limits.TotalCharacters) throw new AppException("CONTEXT_TOTAL", "Выбрано более 600 000 знаков текста. Уменьшите число вложений.");
         var notes = new List<string>(); var calls = 0;

@@ -76,6 +76,11 @@
           "SQLitePCLRaw.core": "2.1.13"
         }
       },
+      "Microsoft.Extensions.AI.Abstractions": {
+        "type": "Transitive",
+        "resolved": "10.2.0",
+        "contentHash": "ONGlIBht0ygEdKc0bCt9XWUiq19/460dAu7fCKzPM34OFJSMQIohEDTJwjCJ8vVp8znNakloc9xFF9+R/eDCYQ=="
+      },
       "PdfPig": {
         "type": "Transitive",
         "resolved": "0.1.16",
@@ -128,6 +133,14 @@
         "resolved": "10.0.13",
         "contentHash": "aUSmC6cPjFLSE0rDTsmkR3wvUOnscqewebOaaELEToh12sNmoltZqT3f0C81mJ1zhxKjWco25soHTvYwsXCsUw=="
       },
+      "Whisper.net": {
+        "type": "Transitive",
+        "resolved": "1.9.1",
+        "contentHash": "82WAKyyMun44cAXE80sP7vIra1oYhbVp2WrnqJm0CISTfMAvint1k/umt0SvsQH+IkDyekZ3BgMdS3Rag9SZ5A==",
+        "dependencies": {
+          "Microsoft.Extensions.AI.Abstractions": "10.2.0"
+        }
+      },
       "ollamadesktop.core": {
         "type": "Project",
         "dependencies": {
@@ -137,6 +150,7 @@
           "Microsoft.Data.Sqlite": "[10.0.13, 10.0.13]",
           "PdfPig": "[0.1.16, 0.1.16]",
           "System.Security.Cryptography.ProtectedData": "[10.0.13, 10.0.13]",
+          "Whisper.net": "[1.9.1, 1.9.1]",
           "bblanchon.PDFium.Win32": "[158.0.8111, 158.0.8111]"
         }
       }

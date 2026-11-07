@@ -17,6 +17,11 @@ public static class Theme
             ["SelectionBrush"] = dark ? "#123E70" : "#DCEBFF", ["CodeBrush"] = dark ? "#0B141F" : "#EEF3F9",
             ["ErrorBrush"] = dark ? "#FFBAC0" : "#A52E3E", ["UserBrush"] = dark ? "#203247" : "#E1EDFF"
         };
+        if (!Application.Current.Resources.Contains("BrandLogo")) {
+            using var stream=Application.GetResourceStream(new Uri("pack://application:,,,/OllamaDesktop;component/Assets/OllamaDesktop.ico"))!.Stream;
+            var decoder=System.Windows.Media.Imaging.BitmapDecoder.Create(stream,System.Windows.Media.Imaging.BitmapCreateOptions.PreservePixelFormat,System.Windows.Media.Imaging.BitmapCacheOption.OnLoad);
+            var image=decoder.Frames.OrderByDescending(f=>f.PixelWidth).First(); image.Freeze(); Application.Current.Resources["BrandLogo"]=image;
+        }
         foreach (var (key, value) in colors) Application.Current.Resources[key] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
     }
 }

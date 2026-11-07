@@ -7,8 +7,8 @@
 [Setup]
 AppId={{4959D6E5-8A31-45A2-B215-992E064C87B9}
 AppName=Ollama Desktop
-AppVersion=0.1.30
-AppVerName=Ollama Desktop 0.1.30
+AppVersion=0.1.31
+AppVerName=Ollama Desktop 0.1.31
 AppPublisher=Ollama Desktop Project
 DefaultDirName={localappdata}\Programs\OllamaDesktopAssistant
 DisableDirPage=yes
@@ -20,7 +20,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0.10240
 AppMutex=Local\OllamaDesktopAssistant
 OutputDir={#OutputDir}
-OutputBaseFilename=OllamaDesktop-0.1.30-win-x64-Setup
+OutputBaseFilename=OllamaDesktop-0.1.31-win-x64-Setup
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -87,7 +87,7 @@ begin
   if not LoadStringsFromFile(PermitPath, Lines) then Exit;
   if GetArrayLength(Lines) <> 5 then Exit;
   if Lines[0] <> 'OllamaDesktopAssistant' then Exit;
-  if Lines[1] <> '0.1.30' then Exit;
+  if Lines[1] <> '0.1.31' then Exit;
   if Lines[2] <> Token then Exit;
   if UpperCase(Lines[3]) <> UpperCase(GetSHA256OfFile(Marker)) then Exit;
   if UpperCase(Lines[4]) <> UpperCase(GetSHA256OfFile(Inventory)) then Exit;

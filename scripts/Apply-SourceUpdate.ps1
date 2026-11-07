@@ -8,14 +8,14 @@ $target = [IO.Path]::GetFullPath($TargetRoot).TrimEnd('\')
 Assert-PlainPath $target
 if ($target -eq $packageRoot) { throw 'Распакуйте исправление в отдельную папку.' }
 if (-not (Test-Path -LiteralPath (Join-Path $target 'RELEASE.json') -PathType Leaf)) {
-    throw 'Не найдена установленная база исходников. Для чистой установки используйте Start.ps1 из архива 0.1.30.'
+    throw 'Не найдена установленная база исходников. Для чистой установки используйте Start.ps1 из архива 0.1.31.'
 }
 $newFiles = @(Get-CurrentInventory $packageRoot)
 $release = Get-Content -LiteralPath (Join-Path $target 'RELEASE.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 if ($release.productId -ne 'OllamaDesktopAssistant') { throw 'Неизвестный проект. Замена запрещена.' }
 if ($release.version -eq $Version) {
     Assert-SourceInventory $target $newFiles
-    Write-Host 'Версия 0.1.30 уже установлена в исходниках; контрольные суммы совпадают.' -ForegroundColor Green
+    Write-Host 'Версия 0.1.31 уже установлена в исходниках; контрольные суммы совпадают.' -ForegroundColor Green
     return
 }
 $baselineName = Get-SourceBaselineFile ([string]$release.version) $target
@@ -32,7 +32,7 @@ try {
     # Files are checked before ANY replacement, including the release marker.
     Assert-SourceInventory $target $oldFiles
     $active = @(Get-SourceUpdateAttempts $target | Where-Object { $_.state.status -ne 'rolledBack' })
-    if ($active.Count -gt 0) { throw 'Есть незавершённая транзакция 0.1.30. Запустите Rollback-SourceUpdate.ps1 из исправления; файлы не изменены.' }
+    if ($active.Count -gt 0) { throw 'Есть незавершённая транзакция 0.1.31. Запустите Rollback-SourceUpdate.ps1 из исправления; файлы не изменены.' }
     Assert-NoUnknownCollisions $target $oldFiles $newFiles
     $newMap = @{}
     foreach ($entry in $newFiles) { $newMap[$entry.path] = $entry }
@@ -83,10 +83,10 @@ try {
             $state.status = 'rolledBack'
             Write-UpdateState $backupRoot $state
         } catch {
-            throw ('Не удалось автоматически восстановить исходники: ' + $_.Exception.Message + '. Для отката используйте Rollback-SourceUpdate.ps1 из архива 0.1.30. Первоначальная ошибка: ' + $failure.Exception.Message)
+            throw ('Не удалось автоматически восстановить исходники: ' + $_.Exception.Message + '. Для отката используйте Rollback-SourceUpdate.ps1 из архива 0.1.31. Первоначальная ошибка: ' + $failure.Exception.Message)
         }
         throw $failure
     }
-    Write-Host 'Исправление 0.1.30 применено. Старая папка незавершённого обновления и пользовательские данные сохранены.' -ForegroundColor Green
+    Write-Host 'Исправление 0.1.31 применено. Старая папка незавершённого обновления и пользовательские данные сохранены.' -ForegroundColor Green
     Write-Host ('Резервная копия: ' + $backup)
 } finally { if ($null -ne $lock) { $lock.Dispose() } }

@@ -19,25 +19,25 @@
    <DockPanel>
     <StackPanel DockPanel.Dock="Top">
      <DockPanel Margin="6,0,0,20">
-      <Button DockPanel.Dock="Right" Content="☰" Click="OnToggleSidebar" ToolTip="Свернуть боковую панель" AutomationProperties.Name="Свернуть боковую панель" Background="Transparent"/>
-      <Image Source="/Assets/OllamaDesktop.ico" Width="38" Height="38" DockPanel.Dock="Left" Margin="0,0,10,0"/>
+      <Button DockPanel.Dock="Right"  Click="OnToggleSidebar" ToolTip="Свернуть боковую панель" AutomationProperties.Name="Свернуть боковую панель" Background="Transparent"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="menu"/></StackPanel></Button>
+      <Image Source="{DynamicResource BrandLogo}" Width="38" Height="38" DockPanel.Dock="Left" Margin="0,0,10,0"/>
       <TextBlock Text="Ollama Desktop" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="16"/>
      </DockPanel>
-     <Button Content="＋   Новый чат" Command="{Binding NewCommand}" HorizontalContentAlignment="Left" Background="{DynamicResource SelectionBrush}" Padding="12,11"/>
-     <Button Content="⌕   Поиск чатов" Click="OnFocusHistory" HorizontalContentAlignment="Left" Background="Transparent"/>
+     <Button  Command="{Binding NewCommand}" HorizontalContentAlignment="Left" Background="{DynamicResource SelectionBrush}" Padding="12,11"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="plus"/><TextBlock Text="Новый чат" Margin="9,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
+     <Button  Click="OnFocusHistory" HorizontalContentAlignment="Left" Background="Transparent"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="search"/><TextBlock Text="Поиск чатов" Margin="9,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
      <TextBox x:Name="HistorySearch" Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Поиск по истории" ToolTip="Поиск по названиям и сообщениям во всех проектах" Margin="3,6,3,14"/>
     </StackPanel>
     <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
-     <Button Content="⚙   Настройки" Command="{Binding SettingsCommand}" HorizontalContentAlignment="Left" Background="Transparent"/>
-     <Button Content="↻   Обновления" Click="OnUpdatesClick" HorizontalContentAlignment="Left" Background="Transparent"/>
-     <Button Content="▥   Диагностика" Click="OnDiagnosticsClick" HorizontalContentAlignment="Left" Background="Transparent"/>
-     <Button Content="ⓘ   О программе" Click="OnAboutClick" HorizontalContentAlignment="Left" Background="Transparent"/>
-     <TextBlock Text="{Binding AppVersion,StringFormat='Ollama Cloud · {0}'}" FontSize="11" Foreground="{DynamicResource MutedBrush}" Margin="15,10,0,3"/>
+     <Button  Command="{Binding SettingsCommand}" HorizontalContentAlignment="Left" Background="Transparent"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="settings"/><TextBlock Text="Настройки" Margin="9,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
+     <Button  Click="OnUpdatesClick" HorizontalContentAlignment="Left" Background="Transparent"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="refresh"/><TextBlock Text="Обновления" Margin="9,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
+     <Button  Click="OnDiagnosticsClick" HorizontalContentAlignment="Left" Background="Transparent"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="diagnostics"/><TextBlock Text="Диагностика" Margin="9,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
+     <Button  Click="OnAboutClick" HorizontalContentAlignment="Left" Background="Transparent"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="info"/><TextBlock Text="О программе" Margin="9,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
+     <TextBlock Text="{Binding AppVersion,StringFormat='Ollama Cloud · {0}'}" FontSize="12" Foreground="{DynamicResource MutedBrush}" Margin="15,10,0,3"/>
     </StackPanel>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
      <StackPanel>
       <DockPanel Margin="10,8,2,6">
-       <Button DockPanel.Dock="Right" Content="＋" Command="{Binding CreateProjectCommand}" ToolTip="Создать проект" AutomationProperties.Name="Создать проект" Padding="7,2" Background="Transparent"/>
+       <Button DockPanel.Dock="Right"  Command="{Binding CreateProjectCommand}" ToolTip="Создать проект" AutomationProperties.Name="Создать проект" Padding="7,2" Background="Transparent"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="plus"/></StackPanel></Button>
        <TextBlock Text="Проекты" Foreground="{DynamicResource MutedBrush}" VerticalAlignment="Center" FontSize="12"/>
       </DockPanel>
       <ItemsControl ItemsSource="{Binding SidebarProjects}">
@@ -45,7 +45,7 @@
         <Expander Foreground="{DynamicResource TextBrush}" Margin="1,3" IsExpanded="True">
          <Expander.Header>
          <DockPanel Width="207">
-          <Button DockPanel.Dock="Right" Content="⋯" Click="OnProjectMenu" Background="Transparent" Padding="5,2" ToolTip="Действия с проектом" AutomationProperties.Name="Действия с проектом"/>
+          <Button DockPanel.Dock="Right"  Click="OnProjectMenu" Background="Transparent" Padding="5,2" ToolTip="Действия с проектом" AutomationProperties.Name="Действия с проектом"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="more"/></StackPanel></Button>
           <Button Content="{Binding Name}" Click="OnProjectSelect" Background="Transparent" HorizontalContentAlignment="Left" MaxWidth="205" Padding="6,5" ToolTip="{Binding Name}">
            <Button.ContextMenu><ContextMenu>
             <MenuItem Header="Переименовать проект" Click="OnProjectRename"/>
@@ -65,7 +65,7 @@
        </DataTemplate></ItemsControl.ItemTemplate>
       </ItemsControl>
       <Button Content="Все чаты" Click="OnAllChats" Background="Transparent" HorizontalContentAlignment="Left" Margin="3,15,3,2"/>
-      <TextBlock Text="Недавние чаты без проекта" FontSize="11" Foreground="{DynamicResource MutedBrush}" Margin="12,9,0,4"/>
+      <TextBlock Text="Недавние чаты без проекта" FontSize="12" Foreground="{DynamicResource MutedBrush}" Margin="12,9,0,4"/>
       <ListBox x:Name="ConversationList" ItemsSource="{Binding RecentChats}" IsEnabled="{Binding NotBusy}" SelectionChanged="OnRecentChatSelected" AutomationProperties.Name="История чатов">
        <ListBox.ItemTemplate><DataTemplate>
         <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" Margin="8,9" FontSize="13"/>
@@ -88,24 +88,24 @@
    <DockPanel Grid.Row="0" LastChildFill="True" Margin="4,2,4,13">
     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
      <Button x:Name="UpdateNotice" Content="Доступно обновление" Click="OnUpdatesClick" Visibility="Collapsed" Background="{DynamicResource AccentBrush}" Foreground="White"/>
-     <Button Content="▤" Click="OnToggleFiles" AutomationProperties.Name="Показать или скрыть файлы" ToolTip="Файлы текущего чата" Background="Transparent"/>
+     <Button  Click="OnToggleFiles" AutomationProperties.Name="Показать или скрыть файлы" ToolTip="Файлы текущего чата" Background="Transparent"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="file"/></StackPanel></Button>
      <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Background="{DynamicResource SurfaceBrush}"
              CornerRadius="11" Padding="12,9" Margin="0,0,7,0">
       <StackPanel>
-       <TextBlock Text="МОДЕЛЬ · АВТО" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource MutedBrush}"/>
-       <TextBlock Text="{Binding ModelLabel}" FontSize="11" TextTrimming="CharacterEllipsis" MaxWidth="210" Margin="0,3,0,0"/>
+       <TextBlock Text="МОДЕЛИ · АВТОВЫБОР" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource MutedBrush}"/>
+       <TextBlock Text="{Binding ModelLabel}" FontSize="12" TextTrimming="CharacterEllipsis" MaxWidth="210" Margin="0,3,0,0"/>
       </StackPanel>
      </Border>
-     <Button Content="⚙" Command="{Binding SettingsCommand}" ToolTip="Настройки моделей" FontSize="18"/>
+     <Button  Command="{Binding SettingsCommand}" ToolTip="Настройки моделей" FontSize="18"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="settings"/></StackPanel></Button>
     </StackPanel>
     <StackPanel Margin="0,6,10,0">
      <StackPanel Orientation="Horizontal">
-      <Button Content="☰" Click="OnToggleSidebar" ToolTip="Боковая панель" AutomationProperties.Name="Боковая панель" Background="Transparent" Padding="8,2"/>
-      <TextBlock Text="{Binding ProjectLabel}" Foreground="{DynamicResource MutedBrush}" FontSize="12" VerticalAlignment="Center"/>
+      <Button x:Name="RestoreSidebarButton" Visibility="Collapsed" Click="OnToggleSidebar" ToolTip="Боковая панель" AutomationProperties.Name="Боковая панель" Background="Transparent" Padding="8,2"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="menu"/></StackPanel></Button>
+      <TextBlock Text="{Binding ChatProjectLabel}" Foreground="{DynamicResource MutedBrush}" FontSize="12" VerticalAlignment="Center"/>
      </StackPanel>
      <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" FontSize="20"/>
      <WrapPanel Margin="0,3,0,0">
-      <Button Content="⋯ Чат" Click="OnChatMenu" Background="Transparent" Padding="8,2" ToolTip="Переименовать, переместить или удалить чат"/>
+      <Button  Click="OnChatMenu" Background="Transparent" Padding="8,2" ToolTip="Переименовать, переместить или удалить чат"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="more"/><TextBlock Text="Чат" Margin="9,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
       <Button Content="Инструкции проекта" Command="{Binding EditProjectCommand}" Visibility="{Binding HasActiveProject,Converter={StaticResource BoolVisibility}}" Background="Transparent" Padding="8,2"/>
      </WrapPanel>
     </StackPanel>
@@ -114,12 +114,12 @@
            BorderBrush="{DynamicResource ErrorBrush}" BorderThickness="1"
            Visibility="{Binding HasError,Converter={StaticResource BoolVisibility}}">
     <DockPanel>
-     <Button Content="×" DockPanel.Dock="Right" Command="{Binding ClearErrorCommand}" ToolTip="Закрыть уведомление" Padding="6,2"/>
+     <Button  DockPanel.Dock="Right" Command="{Binding ClearErrorCommand}" ToolTip="Закрыть уведомление" Padding="6,2"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="close"/></StackPanel></Button>
      <TextBlock Text="{Binding Error}" Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap" VerticalAlignment="Center"/>
     </DockPanel>
    </Border>
    <Grid Grid.Row="2" ClipToBounds="True">
-    <TextBlock Text="Чем могу помочь?&#10;&#10;Напишите вопрос или прикрепите файлы.&#10;Word, Excel, PowerPoint и ZIP создаются по запросу."
+    <TextBlock Text="Чем могу помочь?&#10;&#10;Напишите вопрос или прикрепите файлы."
                FontSize="22" TextAlignment="Center" TextWrapping="Wrap"
                Foreground="{DynamicResource MutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">
      <TextBlock.Style>
@@ -162,17 +162,17 @@
         </Border.Style>
         <StackPanel>
          <DockPanel Margin="0,0,0,7">
-          <Button DockPanel.Dock="Right" Content="⧉" Click="OnCopy" ToolTip="Копировать сообщение" AutomationProperties.Name="Копировать сообщение" FontSize="11" Padding="7,4"/>
-          <Button DockPanel.Dock="Right" Content="⟳" Click="OnRegenerateMessage" ToolTip="Пересоздать последний ответ модели (новый облачный запрос)"
+          <Button DockPanel.Dock="Right"  Click="OnCopy" ToolTip="Копировать сообщение" AutomationProperties.Name="Копировать сообщение" FontSize="12" Padding="7,4"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="copy"/></StackPanel></Button>
+          <Button DockPanel.Dock="Right"  Click="OnRegenerateMessage" ToolTip="Пересоздать последний ответ модели (новый облачный запрос)"
                   AutomationProperties.Name="Пересоздать ответ" FontSize="17" Padding="7,4"
-                  Visibility="{Binding IsLastAssistant,Converter={StaticResource BoolVisibility}}"/>
-          <Image Source="/Assets/OllamaDesktop.ico" Width="30" Height="30" Margin="0,0,10,0">
+                  Visibility="{Binding IsLastAssistant,Converter={StaticResource BoolVisibility}}"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="refresh"/></StackPanel></Button>
+          <Image Source="{DynamicResource BrandLogo}" Width="30" Height="30" Margin="0,0,10,0">
            <Image.Style><Style TargetType="Image"><Style.Triggers><DataTrigger Binding="{Binding IsUser}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Image.Style>
           </Image>
           <TextBlock Text="{Binding Heading}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
-          <TextBlock Text="{Binding State}" Foreground="{DynamicResource MutedBrush}" FontSize="11" Margin="9,0,0,0" VerticalAlignment="Center"/>
+          <TextBlock Text="{Binding State}" Foreground="{DynamicResource MutedBrush}" FontSize="12" Margin="9,0,0,0" VerticalAlignment="Center"/>
          </DockPanel>
-         <TextBlock Text="{Binding AttachmentLabel}" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}"/>
+         <TextBlock Text="{Binding AttachmentLabel}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}"/>
          <controls:MarkdownView Markdown="{Binding Content}" Margin="0,5,0,0"/>
          <ItemsControl ItemsSource="{Binding Artifacts}">
           <ItemsControl.ItemTemplate>
@@ -185,10 +185,10 @@
                <TextBlock Text="▤" Foreground="{DynamicResource AccentBrush}" FontSize="23" Margin="0,0,10,0"/>
                <StackPanel>
                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap" FontSize="13"/>
-                <TextBlock Text="Файл создан и проверен" Foreground="{DynamicResource MutedBrush}" FontSize="11" Margin="0,3,0,0"/>
+                <TextBlock Text="Файл создан и проверен" Foreground="{DynamicResource MutedBrush}" FontSize="12" Margin="0,3,0,0"/>
                </StackPanel>
               </StackPanel>
-              <TextBlock Text="{Binding Validation}" TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" FontSize="11" Margin="0,6,0,5"/>
+              <TextBlock Text="{Binding Validation}" TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" FontSize="12" Margin="0,6,0,5"/>
               <WrapPanel>
                <Button Content="Открыть" ToolTip="Открыть созданный файл" AutomationProperties.Name="Открыть созданный файл" FontSize="16" Click="OnOpenArtifact"/>
                <Button Content="Сохранить как" ToolTip="Сохранить файл как" AutomationProperties.Name="Сохранить файл как" FontSize="16" Click="OnSaveArtifact" Background="{DynamicResource AccentBrush}" Foreground="White"/>
@@ -208,15 +208,7 @@
      </ListBox.ItemTemplate>
     </ListBox>
    </Grid>
-   <DockPanel Grid.Row="3" Margin="0,7,0,7">
-    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-     <Button Content="⇈"                           AutomationProperties.Name="К началу беседы"               Click="OnScrollTopClick" ToolTip="Начало переписки — Ctrl+Home" FontSize="11"/>
-     <Button Content="←"                                AutomationProperties.Name="Предыдущее сообщение"               Click="OnPreviousMessageClick" ToolTip="Предыдущее сообщение — Alt+Up" FontSize="11"/>
-     <Button Content="→"                               AutomationProperties.Name="Следующее сообщение"               Click="OnNextMessageClick" ToolTip="Следующее сообщение — Alt+Down" FontSize="11"/>
-     <Button Content="⇊"                                  AutomationProperties.Name="К последнему сообщению"               Click="OnScrollLatestClick" ToolTip="Последнее сообщение — Ctrl+End" FontSize="11"/>
-    </StackPanel>
-    <TextBlock Text="ПЕРЕПИСКА" Foreground="{DynamicResource MutedBrush}" FontWeight="SemiBold" FontSize="10" VerticalAlignment="Center" Margin="5,0,0,0"/>
-   </DockPanel>
+   <Button x:Name="ScrollLatestButton" Grid.Row="3" Click="OnScrollLatestClick" Visibility="Collapsed" HorizontalAlignment="Center" ToolTip="К последнему сообщению — Ctrl+End" AutomationProperties.Name="К последнему сообщению" Padding="8"><controls:GlyphIcon Kind="down"/></Button>
    <Border Grid.Row="4" Background="{DynamicResource InputBrush}" CornerRadius="13"
            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10">
     <StackPanel>
@@ -227,21 +219,21 @@
               AutomationProperties.Name="Ваш запрос" ToolTip="Enter — отправить; Shift+Enter — новая строка; Ctrl+V — вставить изображение"/>
      <DockPanel Margin="0,9,0,0">
       <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-       <Button Content="⟳"                                      AutomationProperties.Name="Повторить последний запрос" FontSize="16" Command="{Binding RegenerateCommand}" ToolTip="Пересоздать последний ответ — расходует облачный лимит"/>
-       <Button Content="■" ToolTip="Остановить ответ" AutomationProperties.Name="Остановить ответ" FontSize="16" Command="{Binding StopCommand}"/>
-       <Button Content="➤" ToolTip="Отправить запрос" AutomationProperties.Name="Отправить запрос" FontSize="16" Command="{Binding SendCommand}" Background="{DynamicResource AccentBrush}" Foreground="White" FontWeight="SemiBold"/>
+       
+       <Button  ToolTip="Остановить ответ" AutomationProperties.Name="Остановить ответ" FontSize="16" Command="{Binding StopCommand}" Visibility="{Binding Busy,Converter={StaticResource BoolVisibility}}"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="stop"/></StackPanel></Button>
+       <Button  ToolTip="Отправить запрос" AutomationProperties.Name="Отправить запрос" FontSize="16" Command="{Binding SendCommand}" Visibility="{Binding NotBusy,Converter={StaticResource BoolVisibility}}" Background="{DynamicResource AccentBrush}" Foreground="White" FontWeight="SemiBold"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="send"/></StackPanel></Button>
       </StackPanel>
       <WrapPanel VerticalAlignment="Center">
-       <Button Content="＋" ToolTip="Добавить вложение" AutomationProperties.Name="Добавить вложение" FontSize="16" Command="{Binding AttachCommand}"/>
-       <Button Content="▧" ToolTip="Прикрепить изображение из буфера" AutomationProperties.Name="Прикрепить изображение из буфера" FontSize="16" Command="{Binding PasteCommand}"/>
-       <CheckBox Content="Весь текст" IsChecked="{Binding FullDocument}" IsEnabled="{Binding NotBusy}" FontSize="11" ToolTip="Полный разбор больших документов использует дополнительные облачные запросы"/>
-       <CheckBox Content="Фото" IsChecked="{Binding AnalyzeVisuals}" IsEnabled="{Binding NotBusy}" FontSize="11" ToolTip="Отдельная визуальная модель"/>
+       <Button  ToolTip="Добавить вложение" AutomationProperties.Name="Добавить вложение" FontSize="16" Command="{Binding AttachCommand}"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="plus"/></StackPanel></Button>
+       <Button  ToolTip="Прикрепить изображение из буфера" AutomationProperties.Name="Прикрепить изображение из буфера" FontSize="16" Command="{Binding PasteCommand}"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="image"/></StackPanel></Button>
+       <CheckBox Content="Весь текст" IsChecked="{Binding FullDocument}" IsEnabled="{Binding NotBusy}" FontSize="12" ToolTip="Полный разбор больших документов использует дополнительные облачные запросы"/>
+       <CheckBox Content="Фото" IsChecked="{Binding AnalyzeVisuals}" IsEnabled="{Binding NotBusy}" FontSize="12" ToolTip="Отдельная визуальная модель"/>
       </WrapPanel>
      </DockPanel>
      <ProgressBar Height="3" Margin="4,7,4,4" IsIndeterminate="True" Visibility="{Binding Busy,Converter={StaticResource BoolVisibility}}"/>
      <DockPanel Margin="6,2,4,0">
-      <TextBlock DockPanel.Dock="Right" Text="Enter — отправить · Shift+Enter — новая строка" Foreground="{DynamicResource MutedBrush}" FontSize="10"/>
-      <TextBlock Text="{Binding Status}" Foreground="{DynamicResource MutedBrush}" FontSize="11" TextTrimming="CharacterEllipsis"/>
+      <TextBlock DockPanel.Dock="Right" Text="Enter — отправить · Shift+Enter — новая строка" Foreground="{DynamicResource MutedBrush}" FontSize="12"/>
+      <TextBlock Text="{Binding Status}" Foreground="{DynamicResource MutedBrush}" FontSize="12" TextTrimming="CharacterEllipsis"/>
      </DockPanel>
     </StackPanel>
    </Border>
@@ -255,9 +247,9 @@
      <DockPanel Margin="5,0,4,11">
       <TextBlock Text="{Binding AttachmentCounter}" FontSize="15" FontWeight="SemiBold"/>
      </DockPanel>
-     <Button Content="＋ Добавить файлы" ToolTip="Добавить файлы" AutomationProperties.Name="Добавить файлы" FontSize="16" Command="{Binding AttachCommand}"
+     <Button  ToolTip="Добавить файлы" AutomationProperties.Name="Добавить файлы" FontSize="16" Command="{Binding AttachCommand}"
              Background="{DynamicResource SelectionBrush}" Foreground="{DynamicResource TextBrush}"
-             HorizontalContentAlignment="Center" Margin="0,0,0,10" Padding="12,12"/>
+             HorizontalContentAlignment="Center" Margin="0,0,0,10" Padding="12,12"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="plus"/><TextBlock Text="Добавить файлы" Margin="9,0,0,0" VerticalAlignment="Center"/></StackPanel></Button>
     </StackPanel>
     <StackPanel DockPanel.Dock="Bottom" Margin="0,16,0,0">
      <Border CornerRadius="12" Padding="14" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
@@ -273,9 +265,9 @@
      <Border CornerRadius="10" Padding="12" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
              Background="{DynamicResource SurfaceBrush}">
       <StackPanel>
-       <TextBlock Text="Ollama Cloud · онлайн" FontWeight="SemiBold" FontSize="12"/>
-       <TextBlock Text="{Binding ModelLabel}" TextTrimming="CharacterEllipsis" FontSize="11" Foreground="{DynamicResource MutedBrush}" Margin="0,5,0,0"/>
-       <TextBlock Text="AI может ошибаться. Проверяйте важные выводы." TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedBrush}" Margin="0,10,0,0"/>
+       <TextBlock Text="Ollama Cloud" FontWeight="SemiBold" FontSize="12"/>
+       <TextBlock Text="{Binding ModelLabel}" TextTrimming="CharacterEllipsis" FontSize="12" Foreground="{DynamicResource MutedBrush}" Margin="0,5,0,0"/>
+       <TextBlock Text="AI может ошибаться. Проверяйте важные выводы." TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource MutedBrush}" Margin="0,10,0,0"/>
       </StackPanel>
      </Border>
     </StackPanel>
@@ -292,19 +284,19 @@
        </TextBlock.Style>
       </TextBlock>
       <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-       <ItemsControl x:Name="AttachmentList" ItemsSource="{Binding Attachments}">
+       <ItemsControl x:Name="AttachmentList" ItemsSource="{Binding ConversationFiles}">
         <ItemsControl.ItemTemplate>
          <DataTemplate>
           <Border Background="{DynamicResource InputBrush}" Margin="0,0,0,6" Padding="8" CornerRadius="8">
            <DockPanel>
-            <Button DockPanel.Dock="Right" Content="×" FontSize="13" Padding="5,2"
+            <Button DockPanel.Dock="Right"  FontSize="13" Padding="5,2"
                     ToolTip="Убрать из запроса — исходный файл останется"
-                    Command="{Binding DataContext.RemoveAttachmentCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                    Command="{Binding DataContext.RemoveAttachmentCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"><StackPanel Orientation="Horizontal"><controls:GlyphIcon Kind="close"/></StackPanel></Button>
             <TextBlock Text="▤" FontSize="20" Foreground="{DynamicResource AccentBrush}" DockPanel.Dock="Left" Margin="0,0,9,0"/>
             <StackPanel>
-             <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontSize="11" FontWeight="SemiBold" ToolTip="{Binding Details}"/>
-             <TextBlock Text="{Binding Summary}" FontSize="10" TextTrimming="CharacterEllipsis"
-                        Foreground="{DynamicResource MutedBrush}" ToolTip="{Binding Details}" Margin="0,4,0,0"/>
+             <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontSize="12" FontWeight="SemiBold" ToolTip="{Binding Details}"/>
+             <TextBlock Text="{Binding Summary}" FontSize="12" TextTrimming="CharacterEllipsis"
+                        Foreground="{DynamicResource MutedBrush}" ToolTip="{Binding Details}" Margin="0,4,0,0"/><WrapPanel Margin="0,6,0,0"><Button Content="Расшифровка" Click="OnTranscriptClick" FontSize="12" Padding="7,4" Visibility="{Binding IsMedia,Converter={StaticResource BoolVisibility}}"/><Button Content="Продолжить" Click="OnResumeMediaClick" FontSize="12" Padding="7,4" Visibility="{Binding CanResume,Converter={StaticResource BoolVisibility}}"/></WrapPanel>
             </StackPanel>
            </DockPanel>
           </Border>

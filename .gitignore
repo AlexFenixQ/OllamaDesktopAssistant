@@ -15,3 +15,5 @@ qa-runtime/
 *.p12
 *.key
 **/*private-key*
+/src/OllamaDesktop.Core/NativePayload/
+/deployment/native-sources/

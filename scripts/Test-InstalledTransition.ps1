@@ -1,7 +1,7 @@
 ﻿# Program-file simulation only; does not execute Setup or touch user data.
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'InstalledUpgrade.Common.ps1')
-$before=Assert-InstalledAppInventory $InstallDir @('0.1.29')
+$before=Assert-InstalledAppInventory $InstallDir @('0.1.30')
 $originalInventoryHash=(Get-FileHash -LiteralPath $before.inventoryPath -Algorithm SHA256).Hash
 $fixture=Join-Path $env:LOCALAPPDATA ('ODA.u-'+[Guid]::NewGuid().ToString('N').Substring(0,8))
 if(Test-Path -LiteralPath $fixture){throw 'Test directory exists'}
@@ -31,5 +31,5 @@ try {
  if((Get-FileHash -LiteralPath $before.inventoryPath -Algorithm SHA256).Hash -ne $originalInventoryHash){throw 'Actual installation inventory changed'}
  [pscustomobject]@{version=$Version;passed=$true;realInstalledBase=$before.version;oldFiles=@($before.manifest.files).Count;newFiles=@($after.manifest.files).Count;checks=@('real installed inventory verified read-only','program-only clone backup','partial upgrade accepted for rollback','full file transition with obsolete cleanup','backup extraction and old inventory verification','real installation inventory unchanged');actualInstallerExecuted=$false;userDataAccessed=$false} |
   ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $Artifacts 'installed-inventory-transition.json') -Encoding UTF8
- Write-Host 'PASS: program inventory transition 0.1.29 -> 0.1.30 and verified backup restoration, real install unchanged'
+ Write-Host 'PASS: program inventory transition 0.1.30 -> 0.1.31 and verified backup restoration, real install unchanged'
 } finally { if(Test-Path -LiteralPath $fixture){Assert-PlainPath $fixture; Remove-Item -LiteralPath $fixture -Recurse -Force} }

@@ -16,7 +16,7 @@ public static class SafeShell
     {
         if (!artifact.RelativePath.Replace('\\', '/').StartsWith("Generated/", StringComparison.Ordinal)) throw new AppException("ARTIFACT_PATH", "Недопустимый путь результата.");
         var path = paths.Resolve(artifact.RelativePath);
-        if (!new[] { ".docx", ".xlsx", ".pptx", ".zip" }.Contains(Path.GetExtension(path).ToLowerInvariant())) throw new AppException("ARTIFACT_TYPE", "Открытие такого результата запрещено.");
+        if (!new[] { ".docx", ".xlsx", ".pptx", ".zip", ".txt" }.Contains(Path.GetExtension(path).ToLowerInvariant())) throw new AppException("ARTIFACT_TYPE", "Открытие такого результата запрещено.");
         if (!File.Exists(path)) throw new AppException("ARTIFACT_MISSING", "Файл перемещён или удалён.");
         if (!AppPaths.Hash(path).Equals(artifact.Sha256, StringComparison.OrdinalIgnoreCase)) throw new AppException("ARTIFACT_CHANGED", "Файл изменился после создания. Автоматическое открытие остановлено; проверьте файл в папке результатов.");
         return path;

@@ -15,6 +15,7 @@ public partial class SettingsWindow : Window
     {
         Owner = owner; _services = services; _settings = services.Settings.Load(); InitializeComponent();
         TextModel.Text = _settings.TextModel; VisionModel.Text = _settings.VisionModel; Consent.IsChecked = _settings.CloudConsent;
+        SpeechModelChoice.SelectedIndex = _settings.SpeechModel == "medium" ? 1 : 0;
         ThemeChoice.SelectedIndex = _settings.Theme == "Light" ? 1 : 0;
         RefreshKeyHint();
     }
@@ -49,6 +50,7 @@ public partial class SettingsWindow : Window
         try
         {
             _settings.TextModel = TextModel.Text.Trim(); _settings.VisionModel = VisionModel.Text.Trim(); _settings.CloudConsent = Consent.IsChecked == true;
+            _settings.SpeechModel = SpeechModelChoice.SelectedIndex == 1 ? "medium" : "small";
             _settings.Theme = ThemeChoice.SelectedIndex == 1 ? "Light" : "Dark"; SettingsStore.Validate(_settings);
             if (KeyBox.Password.Length > 0) _services.Settings.StoreKey(KeyBox.Password);
             _services.Settings.Save(_settings); KeyBox.Clear(); DialogResult = true;

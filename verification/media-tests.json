@@ -1,0 +1,1 @@
+{"version":"0.1.31","passed":true,"checks":["real worker and nested native job","full Russian ASR with final sentence","cancel after audio","partial TXT preserved","serialized checkpoint restored","resume in new process without repeated ASR","video frames across timeline","original SHA-256 preserved"],"lines":7,"frames":24}

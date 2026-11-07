@@ -4,13 +4,14 @@
 $target = [IO.Path]::GetFullPath($TargetRoot).TrimEnd('\')
 Assert-PlainPath $target
 $active = @(Get-SourceUpdateAttempts $target | Where-Object { $_.state.status -ne 'rolledBack' })
-if ($active.Count -eq 0) { Write-Host 'Активное обновление 0.1.30 не найдено. Исходники не изменялись.'; return }
+if ($active.Count -eq 0) { Write-Host 'Активное обновление 0.1.31 не найдено. Исходники не изменялись.'; return }
 if ($active.Count -ne 1) { throw 'Найдено несколько активных транзакций. Автоматический откат запрещён.' }
 $record = $active[0]; $state = $record.state
 $baselineFile = Get-BaselineFile ([string]$state.fromVersion)
 if ($state.PSObject.Properties.Name -contains 'baselineFile') {
     $allowed = @($baselineFile)
     if ($state.fromVersion -eq '0.1.28') { $allowed += 'UPDATE_BASE_0128_HOTFIX1.json' }
+    if ($state.fromVersion -eq '0.1.30') { $allowed += 'UPDATE_BASE_0130_REPOSITORY.json' }
     if ([string]$state.baselineFile -notin $allowed) { throw 'Неизвестная база отката.' }
     $baselineFile = [string]$state.baselineFile
 }

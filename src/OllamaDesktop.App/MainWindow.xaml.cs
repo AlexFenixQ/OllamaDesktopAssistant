@@ -72,7 +72,7 @@ public partial class MainWindow : Window, IUserDialogs
     }
     public string[] PickFiles()
     {
-        var dialog = new OpenFileDialog { Title = "Выберите вложения", Multiselect = true, CheckFileExists = true, Filter = "Поддерживаемые файлы|*.docx;*.xlsx;*.pptx;*.pdf;*.txt;*.csv;*.jpg;*.jpeg;*.png;*.webp;*.bmp;*.tif;*.tiff;*.zip|Все файлы|*.*" };
+        var dialog = new OpenFileDialog { Title = "Выберите вложения", Multiselect = true, CheckFileExists = true, Filter = "Поддерживаемые файлы|*.docx;*.xlsx;*.pptx;*.pdf;*.txt;*.csv;*.jpg;*.jpeg;*.png;*.webp;*.bmp;*.tif;*.tiff;*.zip;*.wav;*.mp3;*.m4a;*.aac;*.flac;*.ogg;*.opus;*.mp4;*.mov;*.mkv;*.webm;*.avi;*.wmv;*.wma;*.mpg;*.mpeg;*.ts|Все файлы|*.*" };
         return dialog.ShowDialog(this) == true ? dialog.FileNames : [];
     }
     public string? PasteImage()
@@ -135,7 +135,7 @@ public partial class MainWindow : Window, IUserDialogs
             if (target.StartsWith(_services.Paths.Root.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) throw new AppException("SAVE_LOCATION", "Выберите папку вне служебного хранилища приложения, например «Документы».");
             await Task.Run(() => File.Copy(source, target, true));
             _vm.ClearErrorCommand.Execute(null);
-            MessageBox.Show(this, "Копия сохранена.", "Сохранение");
+            _vm.Notify("Копия сохранена.");
         }
         catch (Exception error) { _vm.Fail(error); }
     }
@@ -149,6 +149,7 @@ public partial class MainWindow : Window, IUserDialogs
         // Only an actual scroll movement changes the user's follow preference.
         if (e.OriginalSource is ScrollViewer viewer && e.ExtentHeightChange == 0 && Math.Abs(e.VerticalChange) > 0.5)
             _nearBottom = viewer.ScrollableHeight - viewer.VerticalOffset < 72;
+        ScrollLatestButton.Visibility=_nearBottom || _vm.Messages.Count==0?Visibility.Collapsed:Visibility.Visible;
     }
     private static T? FindVisual<T>(DependencyObject parent) where T : DependencyObject
     {
@@ -196,7 +197,12 @@ public partial class MainWindow : Window, IUserDialogs
         else if (Keyboard.Modifiers == ModifierKeys.Alt && e.Key == Key.Up) { OnPreviousMessageClick(sender, e); e.Handled = true; }
         else if (Keyboard.Modifiers == ModifierKeys.Alt && e.Key == Key.Down) { OnNextMessageClick(sender, e); e.Handled = true; }
     }
-    private void SetSidebar(bool show) { SidebarColumn.Width=new GridLength(show?270:0); SidebarPanel.Visibility=show?Visibility.Visible:Visibility.Collapsed; }
+    private async void OnResumeMediaClick(object sender,RoutedEventArgs e) { if(((FrameworkElement)sender).DataContext is Attachment attachment) await _vm.ResumeMediaAsync(attachment); }
+    private async void OnTranscriptClick(object sender,RoutedEventArgs e) {
+        try { if(((FrameworkElement)sender).DataContext is Attachment {Media: {} media} && media.TranscriptArtifact is {} artifact) SafeShell.OpenFile(await Task.Run(()=>SafeShell.CheckArtifact(_services.Paths,artifact))); }
+        catch(Exception error){_vm.Fail(error);}
+    }
+    private void SetSidebar(bool show) { RestoreSidebarButton.Visibility=show?Visibility.Collapsed:Visibility.Visible; SidebarColumn.Width=new GridLength(show?270:0); SidebarPanel.Visibility=show?Visibility.Visible:Visibility.Collapsed; }
     private void SetFiles(bool show) { FilesColumn.Width=new GridLength(show?Math.Min(310,Math.Max(250,ActualWidth-730)):0); FilesPanel.Visibility=show?Visibility.Visible:Visibility.Collapsed; }
     private void OnToggleSidebar(object sender,RoutedEventArgs e) {
         var show=SidebarPanel.Visibility!=Visibility.Visible; SetSidebar(show);
@@ -226,7 +232,7 @@ public partial class MainWindow : Window, IUserDialogs
         menu.Items.Add(move); menu.Items.Add(new Separator()); menu.Items.Add(new MenuItem { Header="Удалить чат…",Command=_vm.DeleteCommand });
         menu.PlacementTarget=(UIElement)sender; menu.IsOpen=true;
     }
-    private void OnAboutClick(object sender,RoutedEventArgs e) => MessageBox.Show(this,"Ollama Desktop " + BuildInfo.Version + "\nЧаты, проекты и документы через Ollama Cloud.\nhttps://github.com/"+UpdateFeed.Repository+"\nКлюч и история хранятся локально. Модели работают в облаке.","О программе");
+    private void OnAboutClick(object sender,RoutedEventArgs e) => new InfoWindow(this,"О программе","Ollama Desktop " + BuildInfo.Version + "\n\nЧаты, проекты и документы через Ollama Cloud. Речь распознаётся локально Whisper.\n\nДля отчёта текст и выбранные кадры отправляются в Ollama Cloud только по вашему запросу.\n\nhttps://github.com/"+UpdateFeed.Repository).ShowDialog();
     private void OnUpdatesClick(object sender,RoutedEventArgs e) {
         if(_updatesWindow is not null) { _updatesWindow.Activate(); return; }
         _updatesWindow=new UpdatesWindow(this,_services.Settings,_updates,()=>_vm.Busy,async()=> { await _vm.PersistDraftAsync(); _closedApproved=true; },_availableUpdate);

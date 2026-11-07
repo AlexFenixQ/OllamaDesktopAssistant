@@ -1,7 +1,7 @@
 ﻿. (Join-Path $PSScriptRoot 'Common.ps1')
 Assert-Environment
 Assert-InstalledRelease
-$answer = Read-Host 'Удалить приложение версии 0.1.30? История, ключ и вложения останутся. Введите ДА'
+$answer = Read-Host 'Удалить приложение версии 0.1.31? История, ключ и вложения останутся. Введите ДА'
 if ($answer.Trim().ToUpperInvariant() -notin @('ДА','YES')) { Write-Host 'Отменено.'; exit 0 }
 $processes = @(Get-Process -Name 'OllamaDesktop' -ErrorAction SilentlyContinue)
 if ($processes.Count -gt 0) { throw 'Закройте Ollama Desktop обычным способом и повторите эту команду. Принудительное завершение не используется.' }

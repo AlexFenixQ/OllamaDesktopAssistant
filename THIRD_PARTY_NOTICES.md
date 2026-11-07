@@ -1,6 +1,6 @@
 # Dependency and license review record — 2026-10-25
 
-This source preview references external packages; it does not redistribute their downloaded DLLs. Direct package versions are exact-pinned in the project files. Package metadata/license files are copied into each locally built distribution by Collect-Notices.ps1. The script records transitives and captures available native notices. The owner must review completeness and redistribution conditions before public/commercial distribution; no legal clearance is claimed.
+The self-contained installer redistributes the pinned managed/native dependencies with collected upstream notices. Direct package versions are exact-pinned in the project files. Package metadata/license files are copied into each locally built distribution by Collect-Notices.ps1. The script records transitives and captures available native notices. The owner must review completeness and redistribution conditions before public/commercial distribution; no legal clearance is claimed.
 
 | Component | Pinned version | License/review starting point |
 |---|---|---|
@@ -31,3 +31,5 @@ Sources used for integration:
 - https://ollama.com/pricing
 - https://builds.dotnet.microsoft.com/dotnet/release-metadata/10.0/releases.json
 - https://learn.microsoft.com/en-us/dotnet/core/deploying/
+
+Native audio/video additions: Whisper.net 1.9.1 (MIT), whisper.cpp exact commit f24588a272ae8e23280d9c220536437164e6ed28 (MIT), FFmpeg 9.0.2 (LGPL 2.1+ build with GPL/version3/nonfree disabled), and statically linked MinGW/GCC runtimes under their runtime exceptions. Complete corresponding native source archives, build flags/script and licenses are included under ThirdPartyNotices/Media-native. Speech model weights are downloaded separately under OpenAI Whisper MIT; they are not in the installer. See deployment/MEDIA_LICENSES.md.

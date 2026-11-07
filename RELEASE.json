@@ -1,20 +1,20 @@
 {
   "productId": "OllamaDesktopAssistant",
-  "version": "0.1.30",
-  "releaseType": "interface-projects-updates",
+  "version": "0.1.31",
+  "releaseType": "visual-media",
   "date": "2026-11-07",
-  "baseVersion": "0.1.29",
+  "baseVersion": "0.1.30",
   "dataSchema": 1,
   "target": "Windows 10/11 x64 (installer minimum 10.0.10240); Windows 11 ARM64 via x64 emulation (unverified)",
   "sdk": "10.0.403",
   "runtime": "10.0.14",
   "compiledInDeliveryEnvironment": true,
   "windowsExecutedInDeliveryEnvironment": true,
-  "liveCloudTested": false,
+  "liveCloudTested": true,
   "installerIncluded": true,
   "publicDistributionApproved": true,
-  "changeScope": "ChatGPT-style navigation, projects, signed stable/beta updates; user data preserved.",
-  "expectedWindowsTests": 116,
+  "changeScope": "Visual consistency, larger documents, local full audio/video transcription and whole-recording reports.",
+  "expectedWindowsTests": 126,
   "compatibilityPolicy": {
     "windows10InstallerMinimumBuild": 10240,
     "testedWindows10Builds": [],
@@ -30,5 +30,5 @@
   },
   "cleanWindowsAcceptance": false,
   "installerExecuted": true,
-  "installedVersionVerified": "0.1.30"
+  "installedVersionVerified": "0.1.31"
 }

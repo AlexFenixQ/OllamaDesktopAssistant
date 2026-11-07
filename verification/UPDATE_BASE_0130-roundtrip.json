@@ -1,0 +1,12 @@
+﻿{
+    "version":  "0.1.31",
+    "baseVersion":  "0.1.30",
+    "baseline":  "UPDATE_BASE_0130.json",
+    "passed":  true,
+    "checks":  [
+                   "full source update",
+                   "verified rollback",
+                   "unrelated data preserved",
+                   "modified source rejected"
+               ]
+}

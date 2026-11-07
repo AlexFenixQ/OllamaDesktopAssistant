@@ -3,6 +3,7 @@ Assert-Environment
 & (Join-Path $PSScriptRoot 'Verify-Package.ps1') -Quiet
 & (Join-Path $PSScriptRoot 'Bootstrap.ps1')
 Set-BuildEnvironment
+& (Join-Path $PSScriptRoot 'Build-Native.ps1')
 Push-Location $Root
 try {
     $app = Join-Path $Root 'src\OllamaDesktop.App\OllamaDesktop.App.csproj'
@@ -23,7 +24,7 @@ try {
         Remove-Item -LiteralPath $Publish -Recurse -Force
     }
     New-OwnedDirectory $Publish
-    Set-Content -LiteralPath (Join-Path $Publish '.build-owned') -Value 'OllamaDesktopAssistant 0.1.30' -Encoding ASCII
+    Set-Content -LiteralPath (Join-Path $Publish '.build-owned') -Value 'OllamaDesktopAssistant 0.1.31' -Encoding ASCII
     Invoke-Checked $Dotnet @('publish', $app, '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true', '--no-restore', '-o', $Publish, '-p:PublishTrimmed=false', '-p:PublishSingleFile=false')
     foreach ($required in @('OllamaDesktop.exe','OllamaDesktop.dll','coreclr.dll','hostfxr.dll','e_sqlite3.dll','pdfium.dll','policy.xml')) {
         if (-not (Test-Path -LiteralPath (Join-Path $Publish $required))) { throw ('В публикации отсутствует обязательная зависимость: ' + $required) }

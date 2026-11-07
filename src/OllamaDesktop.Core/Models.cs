@@ -5,14 +5,16 @@ namespace OllamaDesktop.Core;
 
 public static class BuildInfo
 {
-    public const string Version = "0.1.30";
+    public const string Version = "0.1.31";
     public const string Product = "Ollama Desktop";
     public const int SchemaVersion = 1;
 }
 public static class Limits
 {
-    public const long FileBytes = 25L * 1024 * 1024;
-    public const long ExpandedBytes = 160L * 1024 * 1024;
+    public const long FileBytes = 512L * 1024 * 1024;
+    public const long ExpandedBytes = 1024L * 1024 * 1024;
+    public const long MediaBytes = 2L * 1024 * 1024 * 1024;
+    public const int MediaSeconds = 6 * 60 * 60;
     public const int ZipEntries = 6000;
     public const int PdfPages = 100;
     public const int ImagePages = 12;
@@ -71,7 +73,10 @@ public sealed class Attachment
     public List<SourceSegment> Segments { get; set; } = [];
     public List<VisualSource> Visuals { get; set; } = [];
     public List<string> Warnings { get; set; } = [];
-    public string Summary => $"{Name} · {Segments.Sum(s => s.Text.Length):N0} знаков · {Visuals.Count} изображений" + (Segments.Count == 0 && Visuals.Count == 0 ? " · нет извлечённого содержимого" : "");
+    public MediaMetadata? Media { get; set; }
+    public bool IsMedia => Media is not null;
+    public bool CanResume => Media is not null && (!Media.AudioComplete || !Media.FramesComplete);
+    public string Summary => Media is not null ? $"{MediaTime.Format(Media.DurationSeconds)} · {Media.Status} · {Media.Lines.Count} реплик · {Visuals.Count} кадров" : $"{Name} · {Segments.Sum(s => s.Text.Length):N0} знаков · {Visuals.Count} изображений" + (Segments.Count == 0 && Visuals.Count == 0 ? " · нет извлечённого содержимого" : "");
     public string Details => Summary + (Warnings.Count == 0 ? "" : "\n" + string.Join("\n", Warnings));
 }
 public sealed class Artifact
@@ -120,6 +125,7 @@ public sealed class AppSettings
     public string TextModel { get; set; } = "gpt-oss:120b";
     public string VisionModel { get; set; } = "gemma4:31b";
     public string Theme { get; set; } = "Dark";
+    public string SpeechModel { get; set; } = "small";
     public string UpdateChannel { get; set; } = "stable";
     public bool AutomaticUpdateChecks { get; set; } = true;
     public bool SidebarCollapsed { get; set; }
@@ -144,7 +150,7 @@ public sealed class ApiMessage
 public sealed record ProviderResult(string Content, List<ToolCall> Tools);
 public sealed record GenerationResult(string Content, List<Artifact> Artifacts, string Note, bool Complete = true);
 public sealed record WorkProgress(string Stage, string? Delta = null, Artifact? CreatedArtifact = null);
-public sealed record ExtractionJob(string ChatId, string AttachmentId, string Name, string Extension);
+public sealed record ExtractionJob(string ChatId, string AttachmentId, string Name, string Extension, string SpeechModel = "small");
 public sealed class WorkerResult
 {
     public Attachment? Attachment { get; set; }

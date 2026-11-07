@@ -1,0 +1,23 @@
+{
+  "sources": [
+    {
+      "file": "ffmpeg-9.0.2.tar.xz",
+      "url": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+      "sha256": "8C3850283EB25FA026482078A04051E0BE17347B09EF81A0849BEC15A96E002E"
+    },
+    {
+      "file": "whisper-net-1.9.1.zip",
+      "url": "https://codeload.github.com/sandrohanea/whisper.net/zip/refs/tags/1.9.1",
+      "sha256": "1FC07BD989B5667EBD2001402B60078F501BCE768709E2004561B3294408ADEA"
+    },
+    {
+      "file": "whisper-cpp-f24588a.zip",
+      "url": "https://codeload.github.com/ggml-org/whisper.cpp/zip/f24588a272ae8e23280d9c220536437164e6ed28",
+      "sha256": "B2BA38693E8894C75109EB2A60D8BEC88DDF12490EEB402B775CE3C56DB5F9B7"
+    }
+  ],
+  "compiler": {
+    "url": "https://github.com/skeeto/w64devkit/releases/download/v2.11.0/w64devkit-x64-2.11.0.7z.exe",
+    "sha256": "54C2BB9962E8A30C8270E34C5EFC3D5FEE579F53087FA7D435B95FBBA2AF7B2B"
+  }
+}

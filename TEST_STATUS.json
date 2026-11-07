@@ -1,16 +1,23 @@
 {
-  "version": "0.1.30",
-  "expectedTotalWindowsTests": 116,
-  "windowsCompile": "Passed on Windows 11 x64 build 26200, .NET SDK 10.0.403 / runtime 10.0.14.",
-  "windowsTests": "116/116 passed; includes signed update policy, channel selection, tampered signatures, project persistence, document generation and parsers.",
-  "wpfChecks": "17/17 passed in isolated temporary data root, including project rename/delete and draft+attachment restoration.",
-  "updateWorkerTests": "4/4 passed on isolated profiles with the actual Windows PowerShell 5.1 worker and a test installer; includes successful update, installer failure/rollback, tampered signature, unknown installed file.",
-  "visualChecks": "Actual WPF window inspected; project selection/rename and update dialog opened on synthetic data.",
-  "powershellTests": "52/52 passed on Windows PowerShell 5.1; package/version/BOM and full source 0.1.29 update/rollback passed.",
-  "liveCloudTested": false,
+  "version": "0.1.31",
+  "expectedTotalWindowsTests": 126,
+  "windowsCompile": "Windows 11 x64 build 26200, SDK 10.0.403, runtime 10.0.14; passed.",
+  "windowsTests": "126/126 passed, including complete six-hour chunk schedule, rejecting overlong/malformed media, whole-text report coverage, real DOCX validation, signed updates and existing document regressions.",
+  "wpfChecks": "17 smoke checks; see smoke-test.json for current executed result.",
+  "mediaIntegration": "Passed: real import worker, nested FFmpeg process, full Russian synthetic MP4 ASR, cancellation after audio, partial TXT, serialized checkpoint, resume in a fresh worker without repeated ASR, 24 frames, source SHA-256 unchanged.",
+  "liveCloudTested": true,
+  "cloudTest": "Real audio report and real vision+text report on synthetic Russian conference; two sampled frames, full transcript, TXT+DOCX created. No personal recordings/history transmitted.",
+  "visualChecks": "Actual WPF dark chat, settings, speech-model drop-down and project menu inspected; themed vector icons and 256px brand frame. Scrollbar replaced to match dark/light resources.",
   "cleanWindowsAcceptance": false,
   "installerExecuted": true,
-  "windowsUserAcceptance": false,
-  "notes": "Clean Windows without development tools, Windows 10/ARM64, and a new live Ollama request were not tested in this release. Installer Authenticode publisher certificate is absent; update metadata has a pinned RSA signature. Original 298 data files and encrypted key matched their pre-task backup before upgrade.",
-  "actualUpgrade": "Real 0.1.29 -> 0.1.30 Inno /VERYSILENT update completed; installed inventory verified. All history rows/fields, encrypted key and attachment/generated file hashes preserved."
+  "limitations": [
+    "No clean Windows VM without SDK/runtime available.",
+    "Actual 2 GiB/6-hour recording and Medium model were not transcribed end-to-end. Limits/timeline checked in unit tests; real Russian Small ASR and video checked on 37-second synthetic recording.",
+    "Speaker identity/diarization is not provided; ASR can misrecognize or omit unintelligible speech.",
+    "Video is a sampled visual analysis, not continuous vision. AV1 and some uncommon codecs unsupported.",
+    "No Authenticode publisher certificate; update metadata is RSA-signed.",
+    "Windows 10/ARM64 and multi-monitor DPI transitions not acceptance-tested."
+  ],
+  "actualUpgrade": "Real signed 0.1.30 -> 0.1.31 silent Inno update completed; full program/Data backups verified. All existing history/project rows and protected fields, encrypted key and existing attachment/generated hashes preserved.",
+  "powershellTests": "52/52 Windows PowerShell 5.1 checks passed; full archive and GitHub-source 0.1.30 update/rollback passed; actual installed inventory transition verified on a clone."
 }

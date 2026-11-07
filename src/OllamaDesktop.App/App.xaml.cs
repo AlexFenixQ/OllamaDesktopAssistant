@@ -13,6 +13,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        EventManager.RegisterClassHandler(typeof(Window),FrameworkElement.LoadedEvent,new RoutedEventHandler((sender,args)=>{if(ReferenceEquals(sender,args.OriginalSource))WindowBounds.Fit((Window)sender);}));
         if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240) ||
             (RuntimeInformation.OSArchitecture != Architecture.X64 &&
              !(RuntimeInformation.OSArchitecture == Architecture.Arm64 && OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000))))

@@ -56,3 +56,9 @@ foreach ($name in @('LICENSE.txt','ThirdPartyNotices.txt')) {
 }
 Copy-Item -LiteralPath (Join-Path $Root 'THIRD_PARTY_NOTICES.md') -Destination (Join-Path $notices 'README.md') -Force
 Write-Host 'Сведения о зависимостях и доступные upstream-лицензии включены. Юридическая проверка перед публичным выпуском остаётся отдельным этапом.'
+
+$mediaNotices=Join-Path $notices 'Media-native';New-OwnedDirectory $mediaNotices
+Copy-Item -LiteralPath (Join-Path $Root 'deployment\native-sources') -Destination $mediaNotices -Recurse -Force
+foreach($file in @('native-sources.json','native-payload.json','MEDIA_LICENSES.md','COPYING.MinGW-w64-runtime.txt','WHISPER_MODEL_LICENSE')){Copy-Item -LiteralPath (Join-Path $Root ('deployment\'+$file)) -Destination $mediaNotices -Force}
+Copy-Item -LiteralPath (Join-Path $Root 'scripts\Build-Native.ps1') -Destination $mediaNotices -Force
+Copy-Item -LiteralPath (Join-Path $Root 'scripts\Common.ps1') -Destination $mediaNotices -Force

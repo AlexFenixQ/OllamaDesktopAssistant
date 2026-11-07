@@ -1,16 +1,20 @@
 <Window x:Class="OllamaDesktop.App.SettingsWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="Настройки Ollama Desktop" Width="710" Height="740" MinWidth="560" MinHeight="530" WindowStartupLocation="CenterOwner" Closing="OnClosing">
  <DockPanel Margin="22"><StackPanel DockPanel.Dock="Bottom"><TextBlock x:Name="StatusText" TextWrapping="Wrap" Margin="3,10"/><WrapPanel HorizontalAlignment="Right"><Button Content="Диагностика…" Click="OnDiagnostics"/><Button Content="Отмена" IsCancel="True"/><Button x:Name="SaveButton" Content="Сохранить" Click="OnSave" IsDefault="True"/></WrapPanel></StackPanel>
   <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,8,0">
+   <TextBlock Text="Распознавание аудио и видео" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,10"/>
+   <TextBlock Text="Речь распознаётся локально. При первом использовании выбранная модель загружается автоматически с проверкой SHA-256. Для отчёта текст и выбранные видеокадры передаются в Ollama Cloud по вашему запросу." TextWrapping="Wrap" Margin="0,0,0,10"/>
+   <TextBlock Text="Речевая модель" Margin="0,4"/><ComboBox x:Name="SpeechModelChoice" AutomationProperties.Name="Речевая модель"><ComboBoxItem Content="Whisper Small — около 466 МиБ, быстрее"/><ComboBoxItem Content="Whisper Medium — около 1,5 ГиБ, медленнее"/></ComboBox>
+   <TextBlock Text="Максимум: документы 512 МиБ; аудио/видео 2 ГиБ, до 6 часов. Расшифровка сохраняется целиком с таймкодами. Определение имён по голосам не выполняется." TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" Margin="0,10,0,22"/>
    <TextBlock Text="Подключение к Ollama Cloud" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,12"/>
    <TextBlock Text="Личный API-ключ"/><PasswordBox x:Name="KeyBox" Margin="0,6,0,3" MaxLength="4096" AutomationProperties.Name="Личный API-ключ Ollama"/><TextBlock x:Name="KeyHint" Foreground="{DynamicResource MutedBrush}" FontSize="12" TextWrapping="Wrap"/>
    <WrapPanel Margin="0,8"><Button Content="Получить ключ" Click="OnKeys"/><Button Content="Лимиты и тарифы" Click="OnPricing"/><Button Content="Удалить сохранённый ключ" Click="OnDeleteKey"/></WrapPanel>
-   <TextBlock Text="Текстовая модель (прямой облачный ID)" Margin="0,12,0,5"/><ComboBox x:Name="TextModel" IsEditable="True"/>
-   <TextBlock Text="Визуальная модель" Margin="0,12,0,5"/><ComboBox x:Name="VisionModel" IsEditable="True"/>
+   <TextBlock Text="Текстовая модель (прямой облачный ID)" Margin="0,12,0,5"/><ComboBox x:Name="TextModel" AutomationProperties.Name="Текстовая облачная модель" IsEditable="True"/>
+   <TextBlock Text="Визуальная модель" Margin="0,12,0,5"/><ComboBox x:Name="VisionModel" AutomationProperties.Name="Визуальная облачная модель" IsEditable="True"/>
    <WrapPanel Margin="0,8"><Button x:Name="CatalogButton" Content="Обновить каталог" Click="OnCatalog"/><Button x:Name="TestButton" Content="Проверить доступ" Click="OnTest"/></WrapPanel>
    <TextBlock Text="Каталог не подтверждает доступ вашего аккаунта. Проверка выполняет небольшой реальный запрос к текстовой модели и расходует облачный лимит." Foreground="{DynamicResource MutedBrush}" TextWrapping="Wrap" FontSize="12"/>
    <CheckBox x:Name="Consent" Margin="0,20,0,10"><TextBlock Text="Я понимаю, что запросы, выбранная история, извлечённый текст и подготовленные изображения передаются в Ollama Cloud. Обработка зависит от интернета и лимитов моего аккаунта." TextWrapping="Wrap" MaxWidth="590"/></CheckBox>
    <TextBlock Text="Ключ шифруется Windows DPAPI для текущего пользователя. История и локальные копии файлов хранятся на этом компьютере, без отдельного шифрования приложением. Скрытой телеметрии нет." TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" FontSize="12"/>
-   <TextBlock Text="Тема оформления" Margin="0,20,0,6"/><ComboBox x:Name="ThemeChoice"><ComboBoxItem Content="Тёмная" Tag="Dark"/><ComboBoxItem Content="Светлая" Tag="Light"/></ComboBox>
+   <TextBlock Text="Тема оформления" Margin="0,20,0,6"/><ComboBox x:Name="ThemeChoice" AutomationProperties.Name="Тема оформления"><ComboBoxItem Content="Тёмная" Tag="Dark"/><ComboBoxItem Content="Светлая" Tag="Light"/></ComboBox>
    <TextBlock Text="Форматы: DOCX, XLSX, PPTX, PDF, TXT, CSV, JPEG, PNG, WebP, BMP, TIFF. Старые DOC/XLS/PPT, файлы с паролем и документы с макросами в этой версии не поддерживаются." TextWrapping="Wrap" Foreground="{DynamicResource MutedBrush}" Margin="0,20,0,10" FontSize="12"/>
   </StackPanel></ScrollViewer>
  </DockPanel>

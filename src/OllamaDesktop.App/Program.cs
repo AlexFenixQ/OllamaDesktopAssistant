@@ -32,7 +32,10 @@ public static class Program
             var job = JsonDefaults.Read<ExtractionJob>(text);
             var root = Environment.GetEnvironmentVariable("ODA_WORKER_DATA_ROOT");
             var paths = string.IsNullOrWhiteSpace(root) ? AppPaths.Default() : new AppPaths(root);
-            result = new WorkerResult { Attachment = new ExtractionEngine(paths).Extract(job) };
+            if (FileGuard.IsMedia("file"+job.Extension)) {
+                var progress=new Progress<string>(stage=>{ lock(Console.Error) { Console.Error.WriteLine(JsonDefaults.Write(new { stage })); Console.Error.Flush(); } });
+                result=new WorkerResult { Attachment=new MediaExtraction(paths).ExtractAsync(job,progress,CancellationToken.None).GetAwaiter().GetResult() };
+            } else result = new WorkerResult { Attachment = new ExtractionEngine(paths).Extract(job) };
         }
         catch (Exception e)
         {

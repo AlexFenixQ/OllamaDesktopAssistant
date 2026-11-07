@@ -1,9 +1,9 @@
 ﻿{
-    "version":  "0.1.30",
+    "version":  "0.1.31",
     "passed":  true,
-    "realInstalledBase":  "0.1.29",
+    "realInstalledBase":  "0.1.30",
     "oldFiles":  491,
-    "newFiles":  491,
+    "newFiles":  516,
     "checks":  [
                    "real installed inventory verified read-only",
                    "program-only clone backup",

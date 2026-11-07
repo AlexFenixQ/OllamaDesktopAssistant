@@ -1,6 +1,6 @@
 # Security and privacy model
 
-## Signed updates in 0.1.30
+## Signed updates in 0.1.31
 
 Automatic checks contact only the public GitHub Releases API for AlexFenixQ/OllamaDesktopAssistant, at startup and every six hours when enabled. The stable channel excludes prereleases; beta accepts both channels. Installation requires a user click, waits for active work, and preserves drafts/staged attachments. No history, attachments or Ollama credentials are sent to GitHub.
 
@@ -35,3 +35,9 @@ The owner build logs can contain local source paths; the diagnostic script expor
 Source archive SHA-256 is supplied in the delivery message and an external checksum file; MANIFEST.json covers complete source files, excluding itself. The Windows build obtains a pinned Microsoft SDK using official release-metadata SHA-512 and Microsoft Authenticode validation. Inno's installer is validated against a trusted Authenticode chain and publisher Pyrsys B.V. Native PDFium notices are tied to the same release archive and matching DLL hash. Build products are not signed with an application-publisher certificate in this preview. Global execution policy, antivirus and SmartScreen settings are never disabled.
 
 First-install rollback uses the known version, installed manifest and normal uninstaller, preserving user data. Version 0.1.29 supports verified in-place updates from known predecessors. Program files and HKCU uninstall metadata are backed up before replacement. Source updates record the exact ordinary/Hotfix baseline and support hash-verified rollback. Interrupted installations can be rolled back only when every present program file matches the old or new known inventory; unknown files stop recovery. User data is stored separately and is not migrated or downgraded.
+
+## Audio/video trust boundary (0.1.31)
+
+Media is untrusted data. Header validation and a strict local container whitelist precede probing. The custom LGPL FFmpeg build disables all network protocols and external codecs; runtime permits only the file protocol and never opens playlists. Decoder arguments use ProcessStartInfo.ArgumentList, no shell. FFmpeg runs in a nested Windows Job Object (1536 MiB per process); the media worker has 3072 MiB per-process memory cap, cancellation kills its process tree. This is not an AppContainer sandbox. Stages have bounded logs/timeouts; the entire import deadline is 24h. Resume uses hash-checked originals and validated checkpoint paths. Five-minute chunk completion atomically checkpoints text/metadata. Cancellation can repeat the unfinished chunk, never marks unfinished output complete.
+
+Whisper weights use immutable upstream URLs and pinned SHA-256, temporary download + atomic move; small/medium are local ASR, not Ollama Cloud audio endpoints. Raw media is not uploaded. Report requests transmit transcript text and optionally selected normalized video frames to Ollama only with existing cloud consent. Full transcription does not imply error-free ASR or speaker identification. All report blocks are processed; if budget/decoding/cloud fails the UI reports failure and keeps the full/partial TXT, rather than silently returning a complete report.
